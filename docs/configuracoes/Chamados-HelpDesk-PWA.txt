@@ -1,9 +1,0 @@
-[
- {
-    "url": "https://bioaroeira.tomticket.com/helpdesk",
-    "custom_name": "Chamados-Bio",
-    "create_desktop_shortcut": true,
-    "default_launch_container": "window",
-    "fallback_app_name": "Chamados-Bio"
-   }
-]
