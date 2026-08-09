@@ -1,0 +1,12 @@
+# Credenciais e segredos - NUNCA commitar
+*.env
+secrets.json
+*.pfx
+*.key
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Exports que podem conter dados sensíveis do tenant
+*-export-raw.json
