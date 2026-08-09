@@ -1,0 +1,9 @@
+# Adicione estas linhas ao .gitignore existente na raiz do repositório:
+
+# Binários de instaladores (grandes demais / não fazem sentido versionados)
+*.msi
+*.intunewin
+*.zip
+
+# Nunca commitar arquivos de configuração de VPN com credenciais
+*.conf
