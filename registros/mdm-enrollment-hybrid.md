@@ -7,6 +7,8 @@
 
 ---
 
+> Para a checklist geral de licenciamento, grupos e ordem de configuração até o dispositivo ficar `Managed`, veja o guia [Boas práticas: do zero até o dispositivo "Managed" no Intune](../docs/guias/boas-praticas-gerenciamento-dispositivos.md). Este registro cobre especificamente os ajustes de DNS, GPO e Conditional Access necessários no cenário Hybrid.
+
 ## Contexto
 
 Em um ambiente Hybrid, as estações são primeiro ingressadas no Active Directory on-premises e, em seguida, sincronizadas como dispositivos no Microsoft Entra ID via Azure AD Connect. Para o auto-enrollment no Intune funcionar, três camadas precisam estar corretas: (1) o dispositivo registrado corretamente no Entra ID, (2) a resolução de DNS interna apontando para os serviços corretos, e (3) GPO/Conditional Access não bloqueando o fluxo de autenticação.
@@ -70,20 +72,17 @@ gpresult /r
 
 Eventos de enrollment ficam em: Visualizador de Eventos → Aplicativos e Serviços → Microsoft → Windows → DeviceManagement-Enterprise-Diagnostics-Provider → Admin. Evento 76 = falha; Evento 75/72 = sucesso.
 
-## Checklist consolidado
+## Problemas encontrados e soluções específicos deste cenário
 
-- [ ] Registros CNAME existem no DNS público
-- [ ] Os mesmos CNAME existem na zona DNS interna do AD (split-brain)
-- [ ] `nslookup` na estação resolve corretamente os dois nomes
-- [ ] GPO "Register domain joined computers as devices" Enabled
-- [ ] GPO "Enable automatic MDM enrollment..." Enabled com User Credential
-- [ ] `dsregcmd /status` confirma AzureAdJoined/DomainJoined/AzureAdPrt = YES
-- [ ] `gpresult /r` confirma as duas GPOs aplicadas
-- [ ] Apps Intune/Intune Enrollment excluídos das políticas de MFA
-- [ ] MDM user scope inclui o grupo correto
-- [ ] Tarefa de enrollment (Agendador → EnterpriseMgmt) executada manualmente
-- [ ] Evento 75/72 (sucesso) presente no log
+- **Problema:** `nslookup` interno retorna "Non-existent domain" mesmo com DNS público correto.
+  **Causa:** ausência dos CNAME espelhados na zona DNS interna (split-brain incompleto).
+  **Solução:** criar os registros CNAME internos conforme passo 1.
+
+- **Problema:** enrollment trava com erro `0xCAA90056` durante a autenticação.
+  **Causa:** Conditional Access bloqueando o app de Intune Enrollment.
+  **Solução:** aplicar as exclusões do passo 3.
 
 ## Referências
 
+- [Boas práticas: do zero até o dispositivo "Managed" no Intune](../docs/guias/boas-praticas-gerenciamento-dispositivos.md) — checklist geral de licenciamento, grupos e ordem de configuração
 - Registro relacionado: [troubleshooting-service-principal-intune-enrollment.md](./troubleshooting-service-principal-intune-enrollment.md)

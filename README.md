@@ -6,6 +6,7 @@
 
 [![Last Commit](https://img.shields.io/github/last-commit/4ndreLuiz2807/lab-intune-entraid?color=0078D4&label=último%20commit)](https://github.com/4ndreLuiz2807/lab-intune-entraid/commits/main)
 [![Registros](https://img.shields.io/badge/registros-4-0078D4)](./registros)
+[![Guias](https://img.shields.io/badge/guias-1-0078D4)](./docs/guias)
 [![License](https://img.shields.io/badge/licença-MIT-blue.svg)](./LICENSE)
 [![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?logo=powershell&logoColor=white)](./scripts)
 [![Microsoft Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4?logo=microsoft&logoColor=white)](#-registros-disponíveis)
@@ -20,11 +21,12 @@
 
 Este repositório documenta, de forma estruturada, as ações e práticas realizadas em um laboratório pessoal focado em **Microsoft Intune**, **Microsoft Entra ID** e no ecossistema **Microsoft 365**. Cada configuração testada vira um registro reprodutível — com contexto, passo a passo, problemas encontrados e evidências — servindo tanto como base de conhecimento pessoal quanto como referência aberta para quem também trabalha ou está aprendendo administração de endpoints Microsoft.
 
-Se você caiu aqui procurando como resolver algo específico no Intune ou Entra ID, veja a [tabela de registros](#-registros-disponíveis) abaixo — é bem provável que já tenha um passo a passo pronto.
+Se você caiu aqui procurando como resolver algo específico no Intune ou Entra ID, veja a [tabela de registros](#-registros-disponíveis) ou os [guias](#-guias) abaixo — é bem provável que já tenha um passo a passo pronto.
 
 ## 📑 Índice
 
 - [Estrutura do repositório](#️-estrutura-do-repositório)
+- [Guias](#-guias)
 - [Registros disponíveis](#-registros-disponíveis)
 - [Ferramentas utilizadas](#️-ferramentas-utilizadas)
 - [Scripts](#️-scripts)
@@ -43,6 +45,7 @@ lab-intune-entraid/
 ├── docs/
 │   ├── modelos/                 # Modelo reutilizável para novos registros
 │   ├── configuracoes/           # Exports de políticas e configurações aplicadas
+│   ├── guias/                   # Guias de referência e boas práticas (não amarrados a uma sessão específica)
 │   └── ferramentas.md           # Catálogo de ferramentas usadas no laboratório
 ├── registros/                   # Um arquivo markdown por prática/sessão
 ├── scripts/                     # Scripts organizados por finalidade
@@ -54,6 +57,14 @@ lab-intune-entraid/
     └── autopilot/
 ```
 
+## 📘 Guias
+
+Diferente dos registros (que documentam uma prática específica), os guias reúnem **boas práticas gerais**, revisitadas conforme o laboratório evolui.
+
+| Guia | Descrição |
+|---|---|
+| [Boas práticas: do zero até o dispositivo "Managed"](./docs/guias/boas-praticas-gerenciamento-dispositivos.md) | Licenciamento, estrutura de grupos, Scope Tags, ordem correta de configuração e checklist completo até o dispositivo ficar `Managed` no Intune |
+
 ## 📚 Registros disponíveis
 
 | Registro | Área | Descrição |
@@ -63,7 +74,7 @@ lab-intune-entraid/
 | [Autopilot Devices — Hybrid Join](./registros/autopilot-hybrid-join.md) | Intune | Configuração completa de dispositivos Autopilot com domain join híbrido |
 | [Secure Boot e TPM 2.0 — Readiness Windows 11](./registros/secureboot-tpm-windows11-readiness.md) | Intune | Detecção e remediação remota (quando possível) de Secure Boot/TPM via Proactive Remediation |
 
-> Novos registros seguem o [modelo padrão](./docs/modelos/modelo-registro.md) e devem ser adicionados a esta tabela.
+> Novos registros seguem o [modelo padrão](./docs/modelos/modelo-registro.md) e devem ser adicionados a esta tabela. Conteúdo de boas práticas **geral** (não específico de uma sessão) vai em [`docs/guias/`](./docs/guias), não em `registros/`, para evitar duplicação.
 
 ## 🛠️ Ferramentas utilizadas
 
@@ -98,6 +109,7 @@ Tópicos já documentados ou em andamento neste laboratório:
 - [x] Autopilot com domain join híbrido
 - [x] Windows 11 readiness (Secure Boot / TPM 2.0)
 - [x] Deploy de Win32 Apps (FortiClient VPN como exemplo)
+- [x] Boas práticas de licenciamento, grupos e ordem de configuração
 - [ ] Compliance policies detalhadas (próximo registro)
 - [ ] Configuration Profiles (ADMX ingestion, OMA-URI customizados)
 - [ ] Co-management com Configuration Manager
@@ -108,6 +120,7 @@ Tópicos já documentados ou em andamento neste laboratório:
 | Prefixo | Uso |
 |---|---|
 | `registro:` | Nova entrada de prática/log |
+| `guia:` | Novo guia ou atualização de boas práticas gerais |
 | `script:` | Novo script ou alteração em script |
 | `doc:` | Atualização de documentação/modelo |
 | `fix:` | Correção de erro em registro ou script anterior |
@@ -118,9 +131,10 @@ Exemplo: `git commit -m "registro: teste de política de compliance no Intune"`
 
 1. Cada prática vira um arquivo em `registros/`, nomeado como `AAAA-MM-DD-titulo-curto.md`.
 2. Use o [modelo de registro](./docs/modelos/modelo-registro.md) como ponto de partida.
-3. Scripts vão em `scripts/<categoria>/`, evidências em `evidencias/`.
-4. Ferramentas novas usadas em algum registro entram em [`docs/ferramentas.md`](./docs/ferramentas.md).
-5. Ao adicionar um novo registro, inclua-o na tabela acima e, se aplicável, marque no roadmap.
+3. Boas práticas **gerais**, não amarradas a uma sessão específica, vão em `docs/guias/` — se um registro específico repetir conteúdo já coberto por um guia, o registro deve linkar o guia em vez de duplicar.
+4. Scripts vão em `scripts/<categoria>/`, evidências em `evidencias/`.
+5. Ferramentas novas usadas em algum registro entram em [`docs/ferramentas.md`](./docs/ferramentas.md).
+6. Ao adicionar um novo registro ou guia, inclua-o na tabela correspondente e, se aplicável, marque no roadmap.
 
 ## ⚠️ Aviso
 
