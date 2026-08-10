@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./docs/assets/banner.png" alt="Laboratório Intune, Entra ID e Microsoft 365" width="100%" />
+
 # 🧪 Laboratório Intune / Entra ID / Microsoft 365
 
 **Registro de práticas, configurações e troubleshooting em um ambiente de laboratório Microsoft 365 — Intune, Entra ID e automações de TI**
@@ -44,17 +46,18 @@ lab-intune-entraid/
 ├── README.md                  # Este arquivo
 ├── LICENSE                    # Licença MIT
 ├── docs/
-│   ├── modelos/                 # Modelo reutilizável para novos registros
-│   ├── configuracoes/           # Exports de políticas e configurações aplicadas
-│   ├── guias/                   # Guias de referência e boas práticas (não amarrados a uma sessão específica)
-│   └── ferramentas.md           # Catálogo de ferramentas usadas no laboratório
-├── registros/                   # Um arquivo markdown por prática/sessão
-├── scripts/                     # Scripts organizados por finalidade
+│   ├── assets/                   # Banner e imagens usadas no README
+│   ├── modelos/                  # Modelo reutilizável para novos registros
+│   ├── configuracoes/            # Exports de políticas e configurações aplicadas
+│   ├── guias/                    # Guias de referência e boas práticas (não amarrados a uma sessão específica)
+│   └── ferramentas.md            # Catálogo de ferramentas usadas no laboratório
+├── registros/                    # Um arquivo markdown por prática/sessão
+├── scripts/                      # Scripts organizados por finalidade
 │   ├── intune-apps/
 │   ├── intune-remediation/
 │   ├── intune-store-policy/
 │   └── forticlient-vpn/
-└── evidencias/                  # Screenshots e evidências visuais
+└── evidencias/                   # Screenshots e evidências visuais
     └── autopilot/
 ```
 
