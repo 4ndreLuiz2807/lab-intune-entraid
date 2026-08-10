@@ -5,12 +5,13 @@
 **Registro de práticas, configurações e troubleshooting em um ambiente de laboratório Microsoft 365 — Intune, Entra ID e automações de TI**
 
 [![Last Commit](https://img.shields.io/github/last-commit/4ndreLuiz2807/lab-intune-entraid?color=0078D4&label=último%20commit)](https://github.com/4ndreLuiz2807/lab-intune-entraid/commits/main)
-[![Registros](https://img.shields.io/badge/registros-4-0078D4)](./registros)
+[![Registros](https://img.shields.io/badge/registros-5-0078D4)](./registros)
 [![Guias](https://img.shields.io/badge/guias-1-0078D4)](./docs/guias)
 [![License](https://img.shields.io/badge/licença-MIT-blue.svg)](./LICENSE)
 [![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?logo=powershell&logoColor=white)](./scripts)
 [![Microsoft Intune](https://img.shields.io/badge/Microsoft-Intune-0078D4?logo=microsoft&logoColor=white)](#-registros-disponíveis)
 [![Microsoft Entra ID](https://img.shields.io/badge/Microsoft-Entra%20ID-0078D4?logo=microsoft&logoColor=white)](#-registros-disponíveis)
+[![Zero Trust](https://img.shields.io/badge/Segurança-Zero%20Trust-0078D4?logo=microsoft&logoColor=white)](./registros/entra-id-hardening-zero-trust.md)
 [![Windows 11](https://img.shields.io/badge/Windows-11-0078D4?logo=windows11&logoColor=white)](./registros/secureboot-tpm-windows11-readiness.md)
 
 </div>
@@ -69,6 +70,7 @@ Diferente dos registros (que documentam uma prática específica), os guias reú
 
 | Registro | Área | Descrição |
 |---|---|---|
+| [Hardening do Tenant Entra ID — CA MFA, Permissões, Grupos e Zero Trust](./registros/entra-id-hardening-zero-trust.md) | Entra ID | Política de MFA para todos, conta de emergência, revisão de permissões (PIM), grupos de segurança, KMSI e princípios de Zero Trust |
 | [MDM Enrollment em Hybrid Azure AD Joined](./registros/mdm-enrollment-hybrid.md) | Entra ID / Intune | Auto-enrollment em ambiente Hybrid: DNS split-brain, GPO e exceções de Conditional Access |
 | [Troubleshooting: Service Principal ausente](./registros/troubleshooting-service-principal-intune-enrollment.md) | Entra ID | App não aparece no picker do Conditional Access — provisionamento manual via Microsoft Graph |
 | [Autopilot Devices — Hybrid Join](./registros/autopilot-hybrid-join.md) | Intune | Configuração completa de dispositivos Autopilot com domain join híbrido |
@@ -110,6 +112,8 @@ Tópicos já documentados ou em andamento neste laboratório:
 - [x] Windows 11 readiness (Secure Boot / TPM 2.0)
 - [x] Deploy de Win32 Apps (FortiClient VPN como exemplo)
 - [x] Boas práticas de licenciamento, grupos e ordem de configuração
+- [x] Hardening de tenant: CA MFA all users, permissões, grupos de segurança, KMSI, Zero Trust
+- [ ] Identity Protection (User risk / Sign-in risk)
 - [ ] Compliance policies detalhadas (próximo registro)
 - [ ] Configuration Profiles (ADMX ingestion, OMA-URI customizados)
 - [ ] Co-management com Configuration Manager
