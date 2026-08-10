@@ -30,7 +30,6 @@ Se você caiu aqui procurando como resolver algo específico no Intune ou Entra 
 
 - [Estrutura do repositório](#️-estrutura-do-repositório)
 - [Guias](#-guias)
-- [Guia de estudos](#-guia-de-estudos)
 - [Registros disponíveis](#-registros-disponíveis)
 - [Ferramentas utilizadas](#️-ferramentas-utilizadas)
 - [Scripts](#️-scripts)
@@ -69,10 +68,6 @@ Diferente dos registros (que documentam uma prática específica), os guias reú
 | Guia | Descrição |
 |---|---|
 | [Boas práticas: do zero até o dispositivo "Managed"](./docs/guias/boas-praticas-gerenciamento-dispositivos.md) | Licenciamento, estrutura de grupos, Scope Tags, ordem correta de configuração e checklist completo até o dispositivo ficar `Managed` no Intune |
-
-## 📖 Guia de estudos
-
-Guia de estudos pessoal, em [`docs/estudos`](./docs/estudos) — estrutura de tópicos de Microsoft Intune com espaço para anotações próprias conforme leio material de referência e aplico no laboratório. Cada capítulo linka de volta pros registros correspondentes quando já testado na prática.
 
 ## 📚 Registros disponíveis
 
