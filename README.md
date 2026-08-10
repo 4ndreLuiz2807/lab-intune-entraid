@@ -41,25 +41,23 @@ Se você caiu aqui procurando como resolver algo específico no Intune ou Entra 
 
 ## 🗂️ Estrutura do repositório
 
-```
 lab-intune-entraid/
-├── README.md                  # Este arquivo
-├── LICENSE                    # Licença MIT
+├── README.md # Este arquivo
+├── LICENSE # Licença MIT
 ├── docs/
-│   ├── assets/                   # Banner e imagens usadas no README
-│   ├── modelos/                  # Modelo reutilizável para novos registros
-│   ├── configuracoes/            # Exports de políticas e configurações aplicadas
-│   ├── guias/                    # Guias de referência e boas práticas (não amarrados a uma sessão específica)
-│   └── ferramentas.md            # Catálogo de ferramentas usadas no laboratório
-├── registros/                    # Um arquivo markdown por prática/sessão
-├── scripts/                      # Scripts organizados por finalidade
-│   ├── intune-apps/
-│   ├── intune-remediation/
-│   ├── intune-store-policy/
-│   └── forticlient-vpn/
-└── evidencias/                   # Screenshots e evidências visuais
-    └── autopilot/
-```
+│ ├── assets/ # Banner e imagens usadas no README
+│ ├── modelos/ # Modelo reutilizável para novos registros
+│ ├── configuracoes/ # Exports de políticas e configurações aplicadas
+│ ├── guias/ # Guias de referência e boas práticas (não amarrados a uma sessão específica)
+│ └── ferramentas.md # Catálogo de ferramentas usadas no laboratório
+├── registros/ # Um arquivo markdown por prática/sessão
+├── scripts/ # Scripts organizados por finalidade
+│ ├── intune-apps/
+│ ├── intune-remediation/
+│ ├── intune-store-policy/
+│ └── forticlient-vpn/
+└── evidencias/ # Screenshots e evidências visuais
+└── autopilot/
 
 ## 📘 Guias
 
