@@ -2,7 +2,6 @@
 
 <img src="./docs/assets/banner.png" alt="Laboratório Intune, Entra ID e Microsoft 365" width="100%" />
 
-# 🧪 Laboratório Intune / Entra ID / Microsoft 365
 
 **Registro de práticas, configurações e troubleshooting em um ambiente de laboratório Microsoft 365 — Intune, Entra ID e automações de TI**
 
