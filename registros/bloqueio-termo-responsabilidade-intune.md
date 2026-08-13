@@ -6,7 +6,7 @@
 ## Contexto
 
 Vincular o Termo de Responsabilidade pela Guarda e Zelo de Equipamentos
-(FO.TI.05) ao Intune, bloqueando automaticamente o acesso do colaborador
+ao Intune, bloqueando automaticamente o acesso do colaborador
 a recursos corporativos até que o termo seja aceito.
 
 **Escopo:** sem eSignature — o documento individual continua sendo
@@ -132,7 +132,7 @@ de modificação como fallback.
       "Operator": "IsEquals",
       "DataType": "Boolean",
       "Operand": true,
-      "MoreInfoUrl": "https://bioaroeira0500.sharepoint.com/sites/DP-ADM-TI-INFRAESTRUTURA-TI/Documentos%20Compartilhados/termo-responsabilidade.html",
+      "MoreInfoUrl": ".html",
       "RemediationStrings": [
         {
           "Language": "en_US",
