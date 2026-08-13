@@ -5,21 +5,21 @@
     e faz: aceite no Termos de Uso -> gera o .ok -> Intune fica compliant.
 
 .PRE-REQUISITOS
-    1. App Registration no Entra ID com permissões de aplicativo (não delegadas):
+    1. App Registration no Entra ID com permissoes de aplicativo (nao delegadas):
        - Agreement.Read.All
        - AgreementAcceptance.Read.All
        - DeviceManagementManagedDevices.Read.All
-       Precisa de consentimento de administrador para as três.
-    2. Módulo: Install-Module Microsoft.Graph -Scope AllUsers
-    3. Rodar numa máquina/servidor com acesso de ESCRITA a \\server221\termos$
-       (idealmente uma conta de serviço dedicada, não sua conta pessoal)
+       Precisa de consentimento de administrador para as tres.
+    2. Modulo: Install-Module Microsoft.Graph -Scope AllUsers
+    3. Rodar numa maquina/servidor com acesso de ESCRITA a \\server221\termos$
+       (idealmente uma conta de servico dedicada, nao sua conta pessoal)
 
 .AGENDAMENTO
     Task Scheduler rodando este script a cada 1h (ou o intervalo que preferir).
-    Não precisa estar sempre ligado — só precisa rodar periodicamente.
+    Nao precisa estar sempre ligado - so precisa rodar periodicamente.
 #>
 
-# ================== CONFIGURAÇÃO — AJUSTE AQUI ==================
+# ================== CONFIGURACAO - AJUSTE AQUI ==================
 $TenantId       = "SEU-TENANT-ID"
 $ClientId       = "SEU-APP-ID"
 $ClientSecret   = "SEU-CLIENT-SECRET"
@@ -37,7 +37,7 @@ try {
         Select-Object -First 1
 
     if (-not $agreement) {
-        throw "Termo de Uso '$AgreementName' não encontrado. Confira o nome exato no Entra ID."
+        throw "Termo de Uso '$AgreementName' nao encontrado. Confira o nome exato no Entra ID."
     }
 
     $acceptances = Get-MgIdentityGovernanceTermsOfUseAgreementAcceptance `
@@ -64,7 +64,7 @@ try {
             if ($conteudoAtual -ne $dataAceite) {
                 try {
                     Set-Content -Path $arquivoOk -Value $dataAceite -Encoding UTF8 -Force -ErrorAction Stop
-                    Write-Host "  OK: $hostname (usuário $userId, aceite em $dataAceite)"
+                    Write-Host "  OK: $hostname (usuario $userId, aceite em $dataAceite)"
                     $registrados++
                 }
                 catch {
@@ -74,7 +74,7 @@ try {
         }
     }
 
-    Write-Host "Sincronização concluída. $registrados dispositivo(s) atualizado(s)."
+    Write-Host "Sincronizacao concluida. $registrados dispositivo(s) atualizado(s)."
 }
 finally {
     Disconnect-MgGraph | Out-Null

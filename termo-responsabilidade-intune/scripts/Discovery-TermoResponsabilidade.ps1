@@ -15,11 +15,11 @@
       (COMPUTER$) do dominio precisa ter permissao de LEITURA no
       compartilhamento de rede abaixo.
     - Ajuste $CaminhoBase para o seu servidor/compartilhamento real.
-    - O output DEVE ser um JSON valido de uma linha só via Write-Host.
+    - O output DEVE ser um JSON valido de uma linha so via Write-Host.
       Nao use Write-Output, Write-Verbose etc para o resultado final.
 #>
 
-# ================== CONFIGURAÇÃO — AJUSTE AQUI ==================
+# ================== CONFIGURACAO - AJUSTE AQUI ==================
 $CaminhoBase = "\\server221\termos$"
 # ==================================================================
 
