@@ -1,0 +1,23 @@
+{
+  "Rules": [
+    {
+      "SettingName": "TermoAssinado",
+      "Operator": "IsEquals",
+      "DataType": "Boolean",
+      "Operand": true,
+      "MoreInfoUrl": "https://bioaroeira0500.sharepoint.com/sites/DP-ADM-TI-INFRAESTRUTURA-TI/Documentos%20Compartilhados/termo-responsabilidade.html",
+      "RemediationStrings": [
+        {
+          "Language": "en_US",
+          "Title": "Liability Term pending",
+          "Description": "This device does not yet have the Equipment Custody and Care Liability Term (FO.TI.05) registered with IT. Please contact the IT department to sign the term. The device will be released automatically on the next compliance check after registration."
+        },
+        {
+          "Language": "pt_BR",
+          "Title": "Termo de Responsabilidade pendente",
+          "Description": "Este equipamento ainda não possui o Termo de Responsabilidade pela Guarda e Zelo de Equipamentos (FO.TI.05) registrado junto à TI. Procure o setor de TI para assinar o termo. Após o registro, o dispositivo será liberado automaticamente na próxima verificação de compliance."
+        }
+      ]
+    }
+  ]
+}
