@@ -1,10 +1,10 @@
 # Bloqueio de Acesso por Termo de Responsabilidade
 
 Vincula o Termo de Responsabilidade pela Guarda e Zelo de Equipamentos
-(FO.TI.05) ao Intune, bloqueando automaticamente o acesso do colaborador
+ao Intune, bloqueando automaticamente o acesso do colaborador
 a recursos corporativos até que o termo seja aceito.
 
-**Empresa:** Bioenergética Aroeira
+**Empresa:** Empresa.local
 **Escopo:** Sem eSignature (documento individual continua em papel/PDF à parte)
 
 ## Índice
