@@ -120,3 +120,184 @@ OMA URI: ./Vendor/MSFT/DMClient/Provider/MS DM Server/FirstSyncStatus/SkipUserSt
 
 - O Group Tag é a forma de segmentar dispositivos Autopilot por setor sem precisar de múltiplos perfis de implantação separados.
 - A ordem importa: a OU e a delegação de permissões no AD precisam existir **antes** de configurar o domain join no Intune, senão o writeback falha silenciosamente.
+
+- ---
+
+## Referência técnica complementar
+
+> Conteúdo consolidado a partir de documentação de implementação do Windows
+> Autopilot v1 em ambiente híbrido (17/04/2026), revisado e corrigido contra
+> a documentação oficial da Microsoft antes de entrar aqui.
+
+### Requisitos resumidos
+
+**Hardware:** TPM 2.0 (ou 1.2 com firmware atualizado), UEFI (sem BIOS legado),
+Secure Boot habilitado, processador com suporte a virtualização.
+
+```powershell
+# Verificar TPM
+Get-WmiObject -Class Win32_Tpm -Namespace root\cimv2\security\microsofttpm
+```
+
+**Licenciamento:** Azure AD Premium P1 (ou M365) + licença de Intune, Intune
+Connector for Active Directory instalado, Azure AD Connect sincronizando
+dispositivos.
+
+**Proxy:** sem inspeção SSL/TLS no tráfego Microsoft; portas 80/443 liberadas;
+autenticação de proxy configurada via GPO ou WinHTTP antes do deployment.
+
+### Intune Connector for Active Directory
+
+Instalado em servidor membro do domínio, autenticado com conta de admin
+global ou de Intune.
+
+```powershell
+# Verificar se o conector está registrado
+Get-ADComputer -Filter "Name -like '*IntuneConnector*'"
+
+# Verificar logs
+Get-EventLog -LogName 'Intune Connector' -Newest 20
+```
+
+### Azure AD Connect — sincronização
+
+```powershell
+# Forçar sincronização imediata
+Start-ADSyncSyncCycle -PolicyType Delta
+
+# Verificar status
+Get-ADSyncConnectorRunStatus
+```
+
+> Aguarde até 24h para que todos os dispositivos sejam sincronizados para o
+> Azure AD após a configuração inicial.
+
+### Grupos de dispositivos (regra dinâmica)
+
+```powershell
+# Exemplo de regra dinâmica em Azure AD
+(device.deviceOSType -eq "Windows") -and (device.deviceOwnership -eq "Company")
+```
+
+```powershell
+New-MgGroup -DisplayName "Autopilot Devices" `
+  -MailEnabled:$false `
+  -SecurityEnabled:$true `
+  -GroupTypes @("DynamicMembership") `
+  -MembershipRuleProcessingState "On"
+```
+
+### Template de nome de dispositivo — sintaxe correta
+
+⚠️ **Correção:** a sintaxe usa **porcentagem**, não chaves duplas.
+
+| Errado | Correto |
+|---|---|
+| `AP-{{RAND:4}}` | `AP-%RAND:4%` |
+| — | `MyCompany-%SERIAL%` |
+
+Regras: nome com até 15 caracteres, apenas letras/números/hífen, não pode
+ser só números.
+
+### Hardware Hash — como obter (só existe 1 método válido)
+
+⚠️ **Correção:** a única forma confiável de gerar o hash é via o script
+oficial da Microsoft. Não existe um "método alternativo" combinando UUID +
+número de série via WMI — isso não produz um hash válido para import.
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+Install-Script -Name Get-WindowsAutopilotInfo -Force
+Get-WindowsAutopilotInfo -OutputFile C:\autopilot-hash.csv
+```
+
+Alternativas legítimas: exportação via Configuration Manager/MECM ("Export
+for Autopilot"), ou coleta durante o próprio OOBE (Shift+F10 → PowerShell).
+
+### Formato do CSV de import — colunas corretas
+
+⚠️ **Correção:** as colunas exigidas pelo Intune são:
+
+```
+Device Serial Number,Windows Product ID,Hardware Hash,Group Tag,Assigned User
+```
+
+Apenas `Device Serial Number` e `Hardware Hash` são obrigatórias; `Windows
+Product ID`, `Group Tag` e `Assigned User` são opcionais. Cabeçalhos são
+case-sensitive e o arquivo não deve ser editado/salvo pelo Excel (corrompe o
+CSV) — use editor de texto puro.
+
+### Importação no Intune
+
+1. `endpoint.microsoft.com` → Devices → Windows → Windows enrollment → Devices
+2. Import devices → selecionar o CSV
+3. Aguardar 5–15 min, revisar resumo, monitorar na aba Summary
+
+### Enrollment Status Page (ESP)
+
+| Status | Significado |
+|---|---|
+| Running | Deployment em andamento |
+| Success | Concluído com sucesso |
+| Failed | Erro durante deployment |
+| Blocked | Compliance rules bloqueando acesso |
+
+```powershell
+Get-Content "C:\Windows\Logs\CloudDM\DmEnrollmentManager.log" -Tail 50
+```
+
+### Verificação de status do dispositivo
+
+```powershell
+dsregcmd /status
+# Device State: Joined -> registrado com sucesso
+# Workplace Joined: YES -> registrado com Azure AD
+```
+
+```powershell
+Connect-MgGraph -Scopes "Device.Read.All"
+Get-MgDevice -All | Select-Object DisplayName, IsCompliant, RegisteredOwners
+```
+
+### Troubleshooting comum
+
+| Problema | Causa provável | Solução |
+|---|---|---|
+| Dispositivo não reconhecido no Autopilot | Hash não importado ou inválido | Verificar CSV, re-importar, aguardar sincronização |
+| Erro de domain join no OOBE | Conectividade AD, permissões ou OU inválida | Verificar OU, firewall, DNS, credenciais do connector |
+| ESP travado / timeout | App com falha, conectividade, script travado | Revisar logs, aumentar timeout, remover app problemático |
+| Dispositivo não sincroniza com Azure AD | Azure AD Connect não sincronizado | Forçar sincronização, verificar conectividade AAD Connect |
+| Erro de conectividade ao Intune | Proxy, firewall, DNS ou credenciais | Testar conectividade, configurar proxy, verificar DNS |
+
+### Limitações importantes
+
+- **Autopilot Reset não funciona em Hybrid Azure AD Join** (confirmado —
+  continua valendo). Para reset em ambiente híbrido, use Wipe completo via
+  Intune, ou reimaging.
+- **GPO sobre VPN durante o OOBE** é instável (latência/DNS/timeout) — evite
+  VPN no OOBE; prefira Configuration Profiles do Intune, ou conecte a VPN só
+  depois do OOBE concluído.
+- **Autopilot exige internet durante o OOBE** — validação de hash,
+  autenticação Azure AD, download de políticas e sync com AD não funcionam
+  offline. Mínimo recomendado: 10+ Mbps, latência <100ms para endpoints
+  Microsoft.
+
+### Estrutura de OUs recomendada
+
+```
+DC=empresa,DC=com
+├── OU=Computadores
+│   ├── OU=Autopilot
+│   │   ├── OU=Laptops
+│   │   ├── OU=Desktops
+│   │   └── OU=Tablets
+│   ├── OU=Legacy
+│   └── OU=Servidores
+└── OU=Usuários
+```
+
+### Referências oficiais
+
+- [Windows Autopilot overview](https://learn.microsoft.com/autopilot)
+- [Entra hybrid join + Autopilot](https://learn.microsoft.com/en-us/autopilot/windows-autopilot-hybrid)
+- [Configure Autopilot profiles (device name template)](https://learn.microsoft.com/en-us/autopilot/profiles)
