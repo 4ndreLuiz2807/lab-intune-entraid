@@ -80,21 +80,6 @@ Diferente dos registros (que documentam uma prática específica), os guias reú
 
 > Novos registros seguem o [modelo padrão](./docs/modelos/modelo-registro.md) e devem ser adicionados a esta tabela. Conteúdo de boas práticas **geral** (não específico de uma sessão) vai em [`docs/guias/`](./docs/guias), não em `registros/`, para evitar duplicação.
 
-## 🗄️ GPO-AD-BANK
-
-Repositório de GPOs mapeadas no Active Directory — logon scripts e
-configurações nativas (GPP/ADMX) documentadas com tipo (Usuário ou
-Computador), esquema de aplicação e passo a passo no GPMC.
-
-| GPO | Tipo | Categoria | Descrição |
-|---|---|---|---|
-| [Mapeamento de Atalhos no Desktop](./GPO-AD-BANK/scripts-logon/mapeamento-atalhos-desktop/) | Usuário | Logon Script | Cria atalhos na área de trabalho do usuário para cada arquivo presente em uma pasta de rede compartilhada |
-| [Wallpaper Institucional](./GPO-AD-BANK/gpo-nativas/wallpaper-institucional/) | Computador + Usuário (misto) | GPP / ADMX | Cria pasta e copia imagens no dispositivo (Computador), define wallpaper de desktop (Usuário) e wallpaper de tela de bloqueio (Computador) |
-
-Veja o [README completo do GPO-AD-BANK](./GPO-AD-BANK/README.md) para a
-estrutura de pastas e convenções de novas entradas.
-
-
 
 
 ## 🛠️ Ferramentas utilizadas
