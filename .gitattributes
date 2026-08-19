@@ -1,0 +1,2 @@
+APLICAÇÕES/SAP/sap.exe filter=lfs diff=lfs merge=lfs -text
+APLICAÇÕES/SAP/sap.intunewin filter=lfs diff=lfs merge=lfs -text
