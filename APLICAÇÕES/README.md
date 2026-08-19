@@ -1,85 +1,275 @@
 <img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/banner.svg" alt="Banner" width="100%" />
 
-# Microsoft Intune --- Win32 Applications
+# Microsoft Intune --- Win32 Application Deployment
 
-Este diretório centraliza os pacotes, scripts e arquivos de configuração
-utilizados para distribuição de **aplicações Win32 através do Microsoft
-Intune**.
+> Repositório destinado à padronização, documentação e armazenamento de
+> pacotes para **deploy de aplicações Win32 através do Microsoft
+> Intune**.
 
-> **Objetivo:** manter um padrão simples, rastreável e reutilizável para
-> empacotamento, instalação, desinstalação e detecção de aplicações
-> corporativas.
+Este repositório funciona como ponto central para os softwares
+corporativos distribuídos pelo **Microsoft Intune**, reunindo
+instaladores, scripts PowerShell, regras de detecção, arquivos de
+configuração e documentação necessária para implantação e manutenção dos
+aplicativos.
 
-## Padrão de cada aplicação
+------------------------------------------------------------------------
 
-Cada aplicação deve possuir, sempre que aplicável:
+## 🎯 Objetivo
 
--   **Instalador** --- `.exe`, `.msi` ou dependências necessárias.
--   **Install.ps1** --- instalação silenciosa.
--   **Uninstall.ps1** --- remoção silenciosa.
--   **Detect.ps1** --- regra de detecção personalizada do Intune.
--   **README.md** --- documentação específica do pacote.
--   **Arquivos de configuração** --- XML, JSON, INI ou demais arquivos
-    necessários.
-
-## Empacotamento `.intunewin`
-
-Utilize o **Microsoft Win32 Content Prep Tool
-(`IntuneWinAppUtil.exe`)**.
-
-``` cmd
-IntuneWinAppUtil.exe -c "C:\Intune\SAP-GUI\Source" -s "Install-SAP.ps1" -o "C:\Intune\Output"
-```
-
-O parâmetro `-s` define o arquivo principal, mas **todo o conteúdo da
-pasta informada em `-c` é incluído no `.intunewin`**.
-
-## Configuração no Intune
-
-**Instalação**
+O objetivo é manter um padrão único para o ciclo de vida das aplicações
+Win32:
 
 ``` text
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Install.ps1"
+Aplicação
+    ↓
+Preparação dos arquivos
+    ↓
+Scripts de instalação/desinstalação
+    ↓
+Empacotamento .intunewin
+    ↓
+Microsoft Intune
+    ↓
+Intune Management Extension
+    ↓
+Dispositivo Windows
+    ↓
+Detecção e validação
 ```
 
-**Desinstalação**
+Cada software deve possuir sua própria pasta e documentação, permitindo
+identificar rapidamente como ele é instalado, removido, detectado e
+atualizado.
+
+------------------------------------------------------------------------
+
+## 📦 Estrutura do repositório
+
+Estrutura recomendada:
 
 ``` text
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Uninstall.ps1"
+Intune-Win32-Apps/
+│
+├── README.md
+│
+├── SAP-GUI/
+│   ├── README.md
+│   ├── Source/
+│   │   ├── instalador.exe
+│   │   ├── Install.ps1
+│   │   └── Uninstall.ps1
+│   └── Detection/
+│       └── Detect.ps1
+│
+├── Google-Chrome/
+│   ├── README.md
+│   ├── Source/
+│   └── Detection/
+│
+├── 7-Zip/
+│   ├── README.md
+│   ├── Source/
+│   └── Detection/
+│
+└── <Aplicacao>/
+    ├── README.md
+    ├── Source/
+    └── Detection/
 ```
 
-**Install behavior:** `System`
+------------------------------------------------------------------------
 
-Para detecção, utilize **Use a custom detection script** e envie o
-`Detect.ps1`.
+## 🗂️ Padrão de cada aplicação
 
-## Regras para scripts
+Cada software deve possuir, quando aplicável:
 
-1.  Executar silenciosamente e sem interação do usuário.
-2.  Funcionar no contexto `NT AUTHORITY\SYSTEM`.
-3.  Retornar `exit 0` em caso de sucesso.
-4.  Retornar código diferente de `0` em caso de falha.
-5.  Criar logs persistentes, preferencialmente em
-    `C:\ProgramData\<Empresa>\Logs\`.
-6.  Utilizar `$PSScriptRoot` para instaladores e dependências incluídos
-    no pacote.
-7.  Não depender de unidades mapeadas do usuário.
-8.  Nunca armazenar senhas, tokens ou credenciais no repositório.
+``` text
+<Application>/
+├── README.md
+│
+├── Source/
+│   ├── setup.exe / setup.msi
+│   ├── Install.ps1
+│   ├── Uninstall.ps1
+│   └── arquivos auxiliares
+│
+└── Detection/
+    └── Detect.ps1
+```
+
+### `README.md`
+
+Documentação específica da aplicação, contendo:
+
+-   Nome e versão;
+-   Tipo de instalador;
+-   Parâmetros silenciosos;
+-   Comando de instalação no Intune;
+-   Comando de desinstalação;
+-   Regra de detecção;
+-   Requisitos;
+-   Arquivos adicionais;
+-   Logs;
+-   Procedimentos de troubleshooting.
+
+### `Source`
+
+Contém tudo que precisa ser incluído no pacote `.intunewin`, como:
+
+``` text
+setup.exe
+setup.msi
+Install.ps1
+Uninstall.ps1
+.xml
+.ini
+.json
+.dll
+```
+
+### `Detection`
+
+Contém scripts utilizados pelo Intune para determinar se a aplicação
+está instalada corretamente.
+
+------------------------------------------------------------------------
+
+# 🚀 Processo de deploy
+
+## 1. Preparar a aplicação
+
+Crie uma pasta exclusiva:
+
+``` text
+C:\Intune\<Aplicacao>\Source
+```
 
 Exemplo:
+
+``` text
+C:\Intune\MinhaAplicacao\Source\
+├── setup.exe
+├── Install.ps1
+└── Uninstall.ps1
+```
+
+------------------------------------------------------------------------
+
+## 2. Validar instalação silenciosa
+
+Antes do empacotamento, valide o instalador e seus parâmetros
+silenciosos.
+
+Exemplo:
+
+``` powershell
+Start-Process `
+    -FilePath ".\setup.exe" `
+    -ArgumentList "/silent" `
+    -Wait `
+    -PassThru
+```
+
+Os scripts destinados ao Intune devem funcionar sem interação do
+usuário.
+
+------------------------------------------------------------------------
+
+## 3. Utilizar `$PSScriptRoot`
+
+Para arquivos incluídos no mesmo pacote, utilize:
 
 ``` powershell
 $Installer = Join-Path $PSScriptRoot "setup.exe"
 ```
 
-## Padrão de detecção
+Evite caminhos absolutos ou compartilhamentos de rede durante a
+instalação.
+
+------------------------------------------------------------------------
+
+## 4. Gerar o `.intunewin`
+
+Utilize o **Microsoft Win32 Content Prep Tool
+(`IntuneWinAppUtil.exe`)**.
+
+Exemplo:
+
+``` cmd
+IntuneWinAppUtil.exe -c "C:\Intune\MinhaAplicacao\Source" -s "Install.ps1" -o "C:\Intune\Output"
+```
+
+No modo interativo:
+
+``` text
+Please specify the source folder:
+C:\Intune\MinhaAplicacao\Source
+
+Please specify the setup file:
+Install.ps1
+
+Please specify the output folder:
+C:\Intune\Output
+```
+
+> O arquivo informado como **Setup File** é o arquivo principal do
+> pacote. Todos os arquivos existentes dentro da pasta Source serão
+> incluídos no `.intunewin`.
+
+------------------------------------------------------------------------
+
+# ☁️ Configuração padrão no Intune
+
+## Install command
+
+Para aplicações controladas por PowerShell:
+
+``` text
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Install.ps1"
+```
+
+## Uninstall command
+
+``` text
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\Uninstall.ps1"
+```
+
+## Install behavior
+
+Preferencialmente:
+
+``` text
+System
+```
+
+Isso permite que a instalação seja executada pelo **Intune Management
+Extension** independentemente do usuário conectado.
+
+------------------------------------------------------------------------
+
+# 🔎 Detecção
+
+Cada aplicação deve possuir uma regra de detecção confiável.
+
+Podem ser utilizadas detecções por:
+
+-   Registro;
+-   Arquivo;
+-   Pasta;
+-   Versão;
+-   MSI Product Code;
+-   Script PowerShell personalizado.
+
+Exemplo de detecção por registro:
 
 ``` powershell
 $App = Get-ItemProperty `
     "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
     "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" `
     -ErrorAction SilentlyContinue |
-    Where-Object { $_.DisplayName -like "Nome da Aplicacao*" } |
+    Where-Object {
+        $_.DisplayName -like "Nome da Aplicacao*"
+    } |
     Select-Object -First 1
 
 if ($App) {
@@ -90,24 +280,59 @@ if ($App) {
 exit 1
 ```
 
-## Logs e troubleshooting
+------------------------------------------------------------------------
 
-Logs próprios dos pacotes:
+# 📝 Logs
+
+Sempre que possível, os scripts devem possuir logs próprios.
+
+Padrão sugerido:
 
 ``` text
 C:\ProgramData\<Empresa>\Logs\
 ```
 
-Logs do Intune Management Extension:
+Exemplo:
+
+``` text
+C:\ProgramData\<Empresa>\Logs\MinhaAplicacao-Install.log
+```
+
+------------------------------------------------------------------------
+
+## Logs do Intune Management Extension
+
+Para troubleshooting dos aplicativos Win32:
 
 ``` text
 C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\
 ```
 
-Arquivos úteis: `AppWorkload.log`, `IntuneManagementExtension.log` e
-`AgentExecutor.log`.
+Principais arquivos:
 
-## Convenção de nomes
+``` text
+AppWorkload.log
+IntuneManagementExtension.log
+AgentExecutor.log
+```
+
+O `AppWorkload.log` é especialmente útil para analisar:
+
+``` text
+Download do pacote
+Extração do .intunewin
+Comando de instalação
+IMECache
+Criação do processo
+Exit Code
+Resultado da instalação
+```
+
+------------------------------------------------------------------------
+
+# 📋 Convenção de nomes
+
+Utilize nomes claros e consistentes:
 
 ``` text
 Install-<Aplicacao>.ps1
@@ -115,45 +340,101 @@ Uninstall-<Aplicacao>.ps1
 Detect-<Aplicacao>.ps1
 ```
 
-Exemplo: `Install-SAP.ps1`, `Uninstall-SAP.ps1` e `Detect-SAP.ps1`.
-
-## Checklist antes do deploy
-
--   Instalação silenciosa testada localmente.
--   Instalação validada em contexto SYSTEM.
--   Desinstalação testada.
--   Regra de detecção validada.
--   Logs funcionando.
--   Instalador e dependências presentes em `Source`.
--   Nenhuma informação sensível incluída.
--   `.intunewin` recriado após alterações.
--   Aplicação validada em grupo piloto antes da implantação geral.
-
-## Fluxo
+Exemplo:
 
 ``` text
-Source
-  ↓
-IntuneWinAppUtil
-  ↓
-.intunewin
-  ↓
-Microsoft Intune
-  ↓
-Intune Management Extension
-  ↓
-Install.ps1
-  ↓
-Aplicação
-  ↓
-Detect.ps1
-  ↓
-Sucesso / Falha
+Install-SAP.ps1
+Uninstall-SAP.ps1
+Detect-SAP.ps1
 ```
 
-## Observação
+Para os pacotes:
 
-Esta subpasta é destinada a **aplicações Win32 (`.intunewin`)
-gerenciadas pelo Microsoft Intune**. Cada aplicação deve permanecer
-isolada em sua própria pasta para facilitar versionamento, atualização,
-troubleshooting e manutenção.
+``` text
+<Aplicacao>-<Versao>.intunewin
+```
+
+------------------------------------------------------------------------
+
+# 🔐 Segurança
+
+Não devem ser armazenados neste repositório:
+
+-   Senhas;
+-   Tokens;
+-   Chaves privadas;
+-   Credenciais administrativas;
+-   Segredos de aplicações;
+-   Certificados privados;
+-   Arquivos contendo informações sensíveis.
+
+Também deve ser avaliado se o instalador possui restrições de
+distribuição/licenciamento antes de adicioná-lo ao repositório.
+
+------------------------------------------------------------------------
+
+# ⚠️ Atualização de aplicações
+
+Sempre que um arquivo existente dentro de `Source` for alterado, gere
+novamente o pacote `.intunewin`.
+
+Fluxo:
+
+``` text
+Alteração
+    ↓
+Teste local
+    ↓
+Novo .intunewin
+    ↓
+Atualização no Intune
+    ↓
+Grupo piloto
+    ↓
+Produção
+```
+
+------------------------------------------------------------------------
+
+# ✅ Checklist antes do deploy
+
+-   [ ] Instalador correto e versão validada
+-   [ ] Instalação silenciosa testada
+-   [ ] Script de instalação testado
+-   [ ] Script de desinstalação testado
+-   [ ] Execução em contexto `SYSTEM` validada
+-   [ ] Regra de detecção validada
+-   [ ] Logs configurados
+-   [ ] Dependências incluídas em `Source`
+-   [ ] Nenhuma credencial armazenada
+-   [ ] `.intunewin` atualizado
+-   [ ] README da aplicação atualizado
+-   [ ] Deploy validado em grupo piloto
+
+------------------------------------------------------------------------
+
+# 📚 Aplicações
+
+Cada subpasta deste repositório representa uma aplicação preparada para
+distribuição pelo Microsoft Intune.
+
+Consulte o `README.md` existente dentro da pasta de cada software para
+obter os comandos, requisitos, parâmetros e procedimentos específicos
+daquela aplicação.
+
+------------------------------------------------------------------------
+
+## ℹ️ Sobre este repositório
+
+Este repositório é destinado à documentação e manutenção de **aplicações
+Win32 distribuídas através do Microsoft Intune**.
+
+A estrutura tem como objetivo facilitar:
+
+-   Padronização dos deployments;
+-   Versionamento dos scripts;
+-   Troubleshooting;
+-   Atualização de aplicações;
+-   Documentação técnica;
+-   Reutilização dos pacotes;
+-   Administração do ambiente Microsoft Intune.
