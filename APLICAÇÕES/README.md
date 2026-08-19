@@ -10,32 +10,6 @@ Intune**.
 > empacotamento, instalação, desinstalação e detecção de aplicações
 > corporativas.
 
-
-## Estrutura recomendada
-
-``` text
-Win32-Apps/
-├── README.md
-├── assets/
-│   └── intune-win32-banner.png
-├── SAP-GUI/
-│   ├── Source/
-│   │   ├── sap.exe
-│   │   ├── Install-SAP.ps1
-│   │   └── Uninstall-SAP.ps1
-│   ├── Detection/
-│   │   └── Detect-SAP.ps1
-│   └── README.md
-└── <Aplicacao>/
-    ├── Source/
-    │   ├── <instalador>
-    │   ├── Install.ps1
-    │   └── Uninstall.ps1
-    ├── Detection/
-    │   └── Detect.ps1
-    └── README.md
-```
-
 ## Padrão de cada aplicação
 
 Cada aplicação deve possuir, sempre que aplicável:
