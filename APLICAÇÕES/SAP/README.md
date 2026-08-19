@@ -1,4 +1,4 @@
-<img src="[APLICAÇÕES/SAP/bannerSAP.png](https://github.com/4ndreLuiz2807/lab-intune-entraid/blob/main/APLICA%C3%87%C3%95ES/SAP/bannerSAP.png)" alt="Banner" width="15%" />
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/SAP/banner_sap_intune.svg" alt="Banner" width="15%" />
 
 # SAP GUI 8.00 --- Deploy via Microsoft Intune
 
