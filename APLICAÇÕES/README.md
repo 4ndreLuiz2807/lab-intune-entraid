@@ -8,8 +8,7 @@ Intune**.
 > empacotamento, instalação, desinstalação e detecção de aplicações
 > corporativas.
 
-![Banner --- Microsoft Intune Win32
-Applications](lab-intune-entraid/APLICAÇÕES)
+![Banner --- Microsoft Intune Win32 Applications](lab-intune-entraid/APLICAÇÕES)
 
 ## Estrutura recomendada
 
