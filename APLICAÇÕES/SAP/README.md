@@ -2,7 +2,7 @@
   <img
     src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/SAP/banner_sap_intune.svg"
     alt="SAP + Microsoft Intune"
-    width="700"
+    width="900"
   />
 </p>
 
