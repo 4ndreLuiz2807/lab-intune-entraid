@@ -1,3 +1,6 @@
+<img src="<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/banner.svg" alt="Banner" width="100%" />
+" alt="Banner" width="100%" />
+
 # SAP GUI 8.00 --- Deploy via Microsoft Intune
 
 Documentação do pacote utilizado para instalação silenciosa do **SAP GUI
