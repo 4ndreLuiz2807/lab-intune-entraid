@@ -9,7 +9,7 @@ Intune**.
 > corporativas.
 
 ![Banner --- Microsoft Intune Win32
-Applications](./assets/intune-win32-banner.png)
+Applications](lab-intune-entraid/APLICAÇÕES)
 
 ## Estrutura recomendada
 
