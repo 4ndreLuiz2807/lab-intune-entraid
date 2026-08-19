@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/banner.svg" alt="Banner" width="100%" />
+
 # Microsoft Intune --- Win32 Applications
 
 Este diretório centraliza os pacotes, scripts e arquivos de configuração
@@ -8,7 +10,6 @@ Intune**.
 > empacotamento, instalação, desinstalação e detecção de aplicações
 > corporativas.
 
-[![Banner --- Microsoft Intune Win32 Applications](lab-intune-entraid/APLICAÇÕES)](https://github.com/4ndreLuiz2807/lab-intune-entraid/blob/main/APLICAÇÕES/banner.svg)
 
 ## Estrutura recomendada
 
