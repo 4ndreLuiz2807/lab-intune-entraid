@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/CheckPoint/banner_checkpoint_harmony.svg" alt="Banner" width="100%" />
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/CheckPoint/banner.checkpoint.svg" alt="Banner" width="100%" />
 
 # Deploy do Check Point Harmony Endpoint via Microsoft Intune
 
