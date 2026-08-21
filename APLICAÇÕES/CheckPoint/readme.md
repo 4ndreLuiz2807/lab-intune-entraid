@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/banner.svg" alt="Banner" width="100%" />
+
 # Deploy do Check Point Harmony Endpoint via Microsoft Intune
 
 Passo a passo para preparar o pacote do **Check Point Harmony
