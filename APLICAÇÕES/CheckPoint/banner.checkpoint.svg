@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="500" viewBox="0 0 1600 500">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#f7f7f9"/>
+  </linearGradient>
+  <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ff146f"/>
+    <stop offset="1" stop-color="#d9005b"/>
+  </linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity=".14"/>
+  </filter>
+</defs>
+
+<!-- Background -->
+<rect width="1600" height="500" fill="url(#bg)"/>
+<path d="M0 0H330L180 150H0Z" fill="#ec0065"/>
+<path d="M1600 500H1270L1420 350H1600Z" fill="#111111"/>
+<path d="M1600 0H1510L1600 90Z" fill="#ec0065" opacity=".85"/>
+
+<!-- Decorative network -->
+<g opacity=".10" stroke="#ec0065" stroke-width="2" fill="none">
+  <circle cx="1150" cy="80" r="190"/>
+  <circle cx="1150" cy="80" r="145"/>
+  <circle cx="1150" cy="80" r="100"/>
+  <path d="M900 70H1450M940 140H1510M1010 210H1540"/>
+</g>
+
+<!-- Logo symbol -->
+<g transform="translate(95 120)">
+  <circle cx="58" cy="58" r="54" fill="url(#pink)"/>
+  <circle cx="79" cy="32" r="23" fill="#ffffff"/>
+  <circle cx="118" cy="8" r="21" fill="#111111"/>
+  <circle cx="66" cy="70" r="15" fill="#ffffff"/>
+  <rect x="31" y="43" width="18" height="18" rx="3" fill="#ffffff" transform="rotate(40 40 52)"/>
+  <path d="M45 55L58 65M78 57L100 27" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>
+</g>
+
+<!-- Brand -->
+<text x="245" y="183" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="700" letter-spacing="1.5" fill="#111111">
+  CHECK <tspan fill="#ec0065">POINT</tspan>
+</text>
+
+<!-- Main title -->
+<text x="95" y="300" font-family="Arial,Helvetica,sans-serif" font-size="74" font-weight="800" letter-spacing="2" fill="#111111">
+  HARMONY <tspan fill="#ec0065">ENDPOINT</tspan>
+</text>
+<rect x="98" y="327" width="105" height="6" rx="3" fill="#ec0065"/>
+<text x="95" y="380" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#4a4a4a">
+  Deploy corporativo via Microsoft Intune
+</text>
+
+<!-- Right security card -->
+<g transform="translate(1120 105)" filter="url(#shadow)">
+  <rect x="0" y="0" width="330" height="250" rx="32" fill="#ffffff"/>
+  <path d="M165 48L242 78V137C242 190 207 223 165 241C123 223 88 190 88 137V78Z" fill="url(#pink)"/>
+  <path d="M132 137L156 161L202 111" fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+<!-- Intune-style device motif -->
+<g transform="translate(925 290)" opacity=".9">
+  <rect x="0" y="0" width="135" height="90" rx="10" fill="none" stroke="#111111" stroke-width="5"/>
+  <rect x="22" y="18" width="91" height="54" rx="4" fill="#ec0065" opacity=".12"/>
+  <path d="M-15 105H150" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="68" cy="45" r="14" fill="#ec0065"/>
+  <path d="M61 45L66 50L76 39" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+<!-- Bottom label -->
+<g transform="translate(95 425)">
+  <rect width="720" height="45" rx="22.5" fill="#111111"/>
+  <text x="26" y="30" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="700" fill="#ffffff" letter-spacing=".6">
+    SEGURANÇA DE ENDPOINT • GERENCIAMENTO CENTRALIZADO • INTUNE
+  </text>
+</g>
+</svg>
