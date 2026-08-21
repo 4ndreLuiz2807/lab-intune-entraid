@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+  <linearGradient id="p" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ff0a73"/>
+    <stop offset="100%" stop-color="#d6005b"/>
+  </linearGradient>
+  <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000" flood-opacity=".18"/>
+  </filter>
+</defs>
+
+<rect width="1600" height="900" fill="#fff"/>
+<polygon points="0,0 190,0 0,190" fill="url(#p)"/>
+<polygon points="1600,900 1420,900 1600,720" fill="url(#p)"/>
+
+<g transform="translate(75 165)">
+  <circle cx="55" cy="55" r="45" fill="url(#p)"/>
+  <circle cx="75" cy="30" r="19" fill="#fff"/>
+  <circle cx="106" cy="12" r="18" fill="#111"/>
+  <circle cx="66" cy="63" r="13" fill="#fff"/>
+  <circle cx="35" cy="43" r="8" fill="#fff"/>
+  <line x1="42" y1="47" x2="58" y2="58" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  <line x1="76" y1="52" x2="94" y2="26" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+</g>
+
+<text x="200" y="245" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700" fill="#111" letter-spacing="2">
+CHECK <tspan fill="#e90064">POINT</tspan>
+</text>
+
+<text x="80" y="420" font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="800" fill="#111" letter-spacing="3">HARMONY</text>
+<text x="80" y="525" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800" fill="#e90064" letter-spacing="2">ENDPOINT</text>
+<rect x="82" y="558" width="128" height="5" rx="2.5" fill="#e90064"/>
+<text x="80" y="615" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#242424">Proteção avançada para endpoints.</text>
+<text x="80" y="660" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#242424">Segurança completa. Simples. Inteligente.</text>
+
+<g transform="translate(940 165)" filter="url(#s)">
+  <circle cx="260" cy="260" r="220" fill="#fff"/>
+  <circle cx="260" cy="260" r="188" fill="#fafafa" stroke="#efefef" stroke-width="3"/>
+  <circle cx="260" cy="260" r="132" fill="url(#p)"/>
+  <circle cx="320" cy="205" r="56" fill="#fff"/>
+  <circle cx="365" cy="135" r="48" fill="#111"/>
+  <circle cx="276" cy="277" r="37" fill="#fff"/>
+  <circle cx="220" cy="235" r="22" fill="#fff"/>
+  <line x1="234" y1="245" x2="257" y2="267" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+  <line x1="295" y1="251" x2="332" y2="200" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+</g>
+
+<rect x="80" y="735" width="1440" height="92" rx="24" fill="#141414"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#fff">
+  <text x="155" y="780">PREVENÇÃO</text><text x="155" y="810">DE AMEAÇAS</text>
+  <text x="505" y="780">PROTEÇÃO</text><text x="505" y="810">MULTICAMADA</text>
+  <text x="860" y="780">GERENCIAMENTO</text><text x="860" y="810">NA NUVEM</text>
+  <text x="1225" y="780">VISIBILIDADE</text><text x="1225" y="810">E CONTROLE</text>
+</g>
+
+<g stroke="#e90064" fill="none" stroke-width="5">
+  <path d="M110 770 l22 -9 l22 9 v20 c0 20 -16 34 -22 38 c-6 -4 -22 -18 -22 -38 z"/>
+  <path d="M128 790 l8 8 l15 -18"/>
+  <rect x="455" y="766" width="48" height="32" rx="4"/>
+  <rect x="470" y="777" width="50" height="32" rx="4"/>
+  <path d="M445 813 h86"/>
+  <path d="M820 803 c-14 0 -25 -10 -25 -23 c0 -12 9 -21 22 -22 c5 -14 17 -22 32 -22 c17 0 30 11 34 26 c12 1 22 10 22 21 c0 12 -10 20 -24 20 z"/>
+  <circle cx="1175" cy="775" r="20"/>
+  <path d="M1144 816 c4 -22 17 -34 31 -34 c15 0 28 12 32 34"/>
+</g>
+
+<rect x="1.5" y="1.5" width="1597" height="897" fill="none" stroke="#e8e8ea" stroke-width="3"/>
+</svg>
