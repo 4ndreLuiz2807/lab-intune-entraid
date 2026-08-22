@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/CheckPoint/banner.checkpoint.svg" alt="Banner" width="100%" />
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICAÇÕES/Google%20Chrome/banner_google_chrome_intune.svg" width="100%" />
 
 
 # 🌐 Google Chrome — Deploy via Microsoft Intune
