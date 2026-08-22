@@ -1,3 +1,6 @@
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/CheckPoint/banner.checkpoint.svg" alt="Banner" width="100%" />
+
+
 # 🌐 Google Chrome — Deploy via Microsoft Intune
 
 Documentação para instalação do **Google Chrome Enterprise** em dispositivos Windows gerenciados pelo **Microsoft Intune**, utilizando o instalador oficial em formato **MSI**.
