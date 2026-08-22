@@ -1,7 +1,3 @@
-<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/Q-GIS/banner_qgis_intune.svg" alt="Banner" width="100%" />
-
-# 🗺️ Deploy do QGIS via Microsoft Intune
-
 ![QGIS + Microsoft Intune](./banner_qgis_intune.svg)
 
 Documentação do processo utilizado para realizar o **deploy do QGIS em dispositivos Windows gerenciados pelo Microsoft Intune**, incluindo instalação silenciosa e criação automática do atalho na Área de Trabalho.
