@@ -2,11 +2,15 @@
   <img src="./banner_forticlient_intune.svg" width="100%" alt="FortiClient VPN via Microsoft Intune">
 </p>
 
-# FortiClient VPN — Deploy via Microsoft Intune
+<p align="center">
+  <img src="./banner_forticlient_intune.svg" width="100%" alt="FortiClient VPN via Microsoft Intune">
+</p>
 
-Documentação do processo utilizado para obter o **MSI do FortiClient VPN a partir do instalador EXE**, empacotar como `.intunewin` e realizar o deploy através do **Microsoft Intune**.
+# FortiClient VPN — Deploy do MSI via Microsoft Intune
 
-> Este procedimento contempla somente a instalação do FortiClient VPN. Configurações de conexão VPN não fazem parte deste deploy.
+Este repositório documenta o processo utilizado para obter o arquivo **MSI do FortiClient VPN a partir do instalador EXE** e publicá-lo diretamente no **Microsoft Intune como aplicativo Line-of-business (LOB)**.
+
+> Este procedimento contempla somente a instalação do FortiClient VPN. A distribuição de configurações de conexão VPN não faz parte deste deploy.
 
 ---
 
@@ -19,13 +23,13 @@ Executar o instalador
         ↓
 Localizar o MSI temporário
         ↓
-Copiar o MSI
-        ↓
-Empacotar com IntuneWinAppUtil
-        ↓
-FortiClientVPN.intunewin
+Copiar o arquivo .MSI
         ↓
 Microsoft Intune
+        ↓
+Line-of-business app
+        ↓
+Upload direto do MSI
         ↓
 Deploy
 ```
@@ -38,15 +42,15 @@ Execute normalmente:
 FortiClientVPNInstaller.exe
 ```
 
-Mantenha o instalador aberto durante a extração dos arquivos.
+Mantenha o instalador aberto enquanto procura o arquivo MSI.
 
-Não finalize imediatamente, pois o MSI extraído pode ser removido quando o instalador encerrar.
+O instalador pode remover os arquivos temporários quando for finalizado.
 
 ---
 
 ## 2. Localizar o MSI
 
-Com o instalador aberto, execute o **PowerShell como Administrador**:
+Com o instalador em execução, abra o **PowerShell como Administrador** e execute:
 
 ```powershell
 Get-ChildItem "$env:TEMP","C:\Windows\Temp","C:\ProgramData" -Recurse -Filter *.msi -ErrorAction SilentlyContinue |
@@ -57,7 +61,7 @@ Select-Object FullName,Length,LastWriteTime
 
 O comando procura arquivos `.msi` criados ou modificados nos últimos 10 minutos.
 
-Procure pelo arquivo correspondente ao FortiClient.
+Procure pelo MSI correspondente ao FortiClient.
 
 Exemplo:
 
@@ -67,13 +71,13 @@ FullName
 C:\Users\usuario\AppData\Local\Temp\{GUID}\FortiClientVPN.msi
 ```
 
-> O caminho pode variar de acordo com a versão do instalador.
+> O caminho e o nome podem variar conforme a versão do FortiClient.
 
 ---
 
 ## 3. Copiar o MSI
 
-Assim que localizar o arquivo, copie-o antes de fechar o instalador.
+Assim que localizar o MSI, copie-o para uma pasta permanente **antes de fechar o instalador**.
 
 Crie uma pasta:
 
@@ -81,13 +85,13 @@ Crie uma pasta:
 New-Item -ItemType Directory -Path "C:\INTUNE\FortiClient" -Force
 ```
 
-Copie o MSI:
+Depois copie o arquivo:
 
 ```powershell
 Copy-Item "CAMINHO_DO_MSI\FortiClientVPN.msi" "C:\INTUNE\FortiClient\FortiClientVPN.msi"
 ```
 
-Confirme:
+Valide:
 
 ```powershell
 Test-Path "C:\INTUNE\FortiClient\FortiClientVPN.msi"
@@ -99,115 +103,76 @@ Resultado esperado:
 True
 ```
 
-A estrutura final será:
-
-```text
-C:\INTUNE\FortiClient\
-└── FortiClientVPN.msi
-```
-
 ---
 
-## 4. Empacotar para o Intune
+## 4. Publicar o MSI diretamente no Intune
 
-Execute:
-
-```text
-IntuneWinAppUtil.exe
-```
-
-Informe:
-
-### Source folder
-
-```text
-C:\INTUNE\FortiClient
-```
-
-### Setup file
-
-```text
-FortiClientVPN.msi
-```
-
-### Output folder
-
-```text
-C:\INTUNE\Output
-```
-
-Ao finalizar será gerado:
-
-```text
-C:\INTUNE\Output\FortiClientVPN.intunewin
-```
-
----
-
-## 5. Criar o aplicativo no Intune
-
-No **Microsoft Intune Admin Center**:
+Acesse o **Microsoft Intune Admin Center**:
 
 ```text
 Apps
 → Windows
 → Add
-→ Windows app (Win32)
 ```
 
-Faça upload de:
+Em **App type**, selecione:
 
 ```text
-FortiClientVPN.intunewin
+Line-of-business app
 ```
 
-Preencha as informações do aplicativo, por exemplo:
+Clique em **Select**.
+
+---
+
+## 5. Fazer upload do MSI
+
+Em **App package file**, selecione:
+
+```text
+FortiClientVPN.msi
+```
+
+O arquivo MSI será enviado diretamente para o Intune.
+
+Neste método:
+
+```text
+NÃO é necessário gerar .intunewin
+NÃO é necessário usar IntuneWinAppUtil
+NÃO é necessário criar install.ps1
+```
+
+---
+
+## 6. Informações do aplicativo
+
+Após o upload, o Intune lê informações disponíveis no pacote MSI.
+
+Revise os campos apresentados e preencha o necessário.
+
+Exemplo:
 
 ```text
 Name: FortiClient VPN
 Publisher: Fortinet
 ```
 
----
-
-## 6. Program
-
-Como o arquivo utilizado no empacotamento é um **MSI**, o Intune consegue ler os metadados do Windows Installer e normalmente preenche automaticamente os comandos de instalação e desinstalação.
-
-Portanto, utilize os comandos preenchidos automaticamente pelo Intune.
-
-Configure:
-
-```text
-Install behavior: System
-```
-
-Não é necessário utilizar `install.ps1` neste cenário.
+Adicione também descrição, categoria, logo e informações de suporte conforme o padrão da organização.
 
 ---
 
-## 7. Requirements
+## 7. Comandos de instalação e desinstalação
 
-Configure conforme o ambiente e a versão do FortiClient.
+Como o aplicativo está sendo publicado diretamente como **MSI / Line-of-business app**, o gerenciamento da instalação utiliza as informações do Windows Installer.
 
-Exemplo:
+Não é necessário criar um script PowerShell de instalação.
 
-```text
-Operating system architecture: 64-bit
-Minimum operating system: Windows 10 ou superior
-```
+Também não é necessário utilizar o `IntuneWinAppUtil.exe` neste cenário.
 
 ---
 
-## 8. Detection rules
-
-Utilize a detecção baseada no **MSI Product Code** identificado pelo Intune.
-
-Não é necessário criar um script de detecção para este cenário.
-
----
-
-## 9. Assignments
+## 8. Assignments
 
 Em:
 
@@ -215,55 +180,128 @@ Em:
 Assignments
 ```
 
-Adicione o grupo que receberá o aplicativo.
+adicione o grupo que receberá o FortiClient VPN.
 
-Para instalação automática:
+Para instalação obrigatória:
 
 ```text
 Required
 ```
 
-Para disponibilizar pelo Company Portal:
-
-```text
-Available for enrolled devices
-```
+Para disponibilização ao usuário, utilize as opções de atribuição disponíveis para o tipo de aplicativo e para o cenário da organização.
 
 ---
 
-## 10. Logs do Intune
+## 9. Criar o aplicativo
 
-Em caso de falha, consulte:
+Revise as configurações:
+
+```text
+Review + create
+```
+
+Depois:
+
+```text
+Create
+```
+
+O Intune fará o upload e processamento do MSI.
+
+---
+
+## 10. Sincronizar a máquina de teste
+
+Na máquina gerenciada:
+
+```text
+Settings
+→ Accounts
+→ Access work or school
+→ Conta corporativa
+→ Info
+→ Sync
+```
+
+Aguarde o processamento da atribuição.
+
+---
+
+## 11. Validar a instalação
+
+Depois do deploy, valide pelo PowerShell:
+
+```powershell
+Get-ChildItem `
+"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+"HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" `
+-ErrorAction SilentlyContinue |
+ForEach-Object {
+    Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
+} |
+Where-Object {
+    $_.DisplayName -like "*FortiClient*"
+} |
+Select-Object DisplayName,DisplayVersion
+```
+
+O FortiClient VPN também deverá aparecer entre os aplicativos instalados no Windows.
+
+---
+
+## 12. Logs do Intune
+
+Em caso de falha, consulte os logs do dispositivo:
 
 ```text
 C:\ProgramData\Microsoft\IntuneManagementExtension\Logs
 ```
 
-Principal log para análise do Win32 App:
+Além disso, consulte o status da instalação do aplicativo no próprio Intune para identificar códigos de erro e dispositivos afetados.
 
-```text
-IntuneManagementExtension.log
+---
+
+## 13. Se o MSI desaparecer
+
+Caso o arquivo temporário seja removido antes da cópia:
+
+1. Execute novamente o `FortiClientVPNInstaller.exe`;
+2. Mantenha o instalador aberto;
+3. Execute o comando PowerShell de busca;
+4. Localize o MSI criado recentemente;
+5. Copie o arquivo para `C:\INTUNE\FortiClient`;
+6. Só depois finalize ou cancele o instalador.
+
+---
+
+## Comando rápido para localizar o MSI
+
+```powershell
+Get-ChildItem "$env:TEMP","C:\Windows\Temp","C:\ProgramData" -Recurse -Filter *.msi -ErrorAction SilentlyContinue |
+Where-Object LastWriteTime -gt (Get-Date).AddMinutes(-10) |
+Sort-Object LastWriteTime -Descending |
+Select-Object FullName,Length,LastWriteTime
 ```
 
 ---
 
 ## Resultado
 
-Ao final:
-
 ```text
-EXE
- ↓
-MSI extraído
- ↓
-.intunewin
- ↓
-Microsoft Intune
- ↓
+FortiClientVPNInstaller.exe
+        ↓
+MSI localizado durante a instalação
+        ↓
+MSI copiado
+        ↓
+Intune
+        ↓
+Line-of-business app
+        ↓
+Upload do MSI
+        ↓
 FortiClient VPN instalado
 ```
-
-O deploy fica simples, utilizando o **MSI original extraído pelo instalador**, sem necessidade de script PowerShell para instalação.
 
 ---
 
@@ -275,7 +313,7 @@ FortiClient-Intune/
 └── banner_forticlient_intune.svg
 ```
 
-> Não publique o instalador do FortiClient no repositório. Mantenha apenas a documentação e os arquivos próprios do projeto.
+> Não publique o instalador proprietário do FortiClient no repositório. Mantenha somente documentação e arquivos próprios do projeto.
 
 ---
 
@@ -285,9 +323,8 @@ FortiClient-Intune/
 - Microsoft Entra ID
 - FortiClient VPN
 - Windows Installer (MSI)
-- Win32 App (`.intunewin`)
-- Microsoft Win32 Content Prep Tool
 - PowerShell
+- Windows 10 / Windows 11
 
 ---
 
