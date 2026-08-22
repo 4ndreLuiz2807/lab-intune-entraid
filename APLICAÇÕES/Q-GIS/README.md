@@ -28,7 +28,7 @@ O instalador utilizado é disponibilizado em formato **MSI** e foi empacotado co
 O instalador pode ser obtido através do site oficial do QGIS:
 
 **QGIS Download:**  
-https://qgis.org/download/
+[https://qgis.org/download/](https://download.qgis.org/downloads/QGIS-OSGeo4W-3.44.13-1.msi)
 
 Para ambientes corporativos, pode ser interessante utilizar uma versão **LTR (Long Term Release)**, priorizando estabilidade e suporte prolongado.
 
