@@ -1,7 +1,6 @@
 <p align="center">
   <img src="./banner_forticlient_intune.svg" width="100%" alt="FortiClient VPN via Microsoft Intune">
 </p>
-# FortiClient VPN — Deploy do MSI via Microsoft Intune
 
 Este repositório documenta o processo utilizado para obter o arquivo **MSI do FortiClient VPN a partir do instalador EXE** e publicá-lo diretamente no **Microsoft Intune como aplicativo Line-of-business (LOB)**.
 
