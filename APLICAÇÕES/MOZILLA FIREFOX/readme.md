@@ -1,7 +1,5 @@
 <img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/MOZILLA%20FIREFOX/banner_firefox_intune.svg" width="100%" />
 
-# 🦊 Mozilla Firefox via Microsoft Intune
-
 Documentação para implantação do **Mozilla Firefox** em dispositivos Windows gerenciados pelo **Microsoft Intune**, utilizando o instalador oficial **MSI Enterprise** disponibilizado pela Mozilla.
 
 O objetivo é realizar uma implantação simples e centralizada, sem necessidade de converter o instalador `.exe` ou criar um pacote `.intunewin`.
