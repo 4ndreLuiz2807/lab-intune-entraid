@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="720" viewBox="0 0 1800 720">
+<defs>
+ <linearGradient id="blue" x1="0" x2="1"><stop stop-color="#08285f"/><stop offset="1" stop-color="#0878ed"/></linearGradient>
+ <linearGradient id="red" x1="0" x2="1"><stop stop-color="#b90000"/><stop offset=".55" stop-color="#ef120d"/><stop offset="1" stop-color="#ff3427"/></linearGradient>
+ <linearGradient id="footer" x1="0" x2="1"><stop stop-color="#061b4a"/><stop offset=".55" stop-color="#26172d"/><stop offset="1" stop-color="#e60000"/></linearGradient>
+ <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123a82"/><stop offset="1" stop-color="#06152f"/></linearGradient>
+ <filter id="shadow"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#00152d" flood-opacity=".22"/></filter>
+</defs>
+
+<rect width="1800" height="720" fill="#fff"/>
+<!-- left navy corner -->
+<path d="M0 0H190L225 35V170L0 285Z" fill="#061b4a"/>
+<path d="M0 205L110 260L0 320Z" fill="#075bd0"/>
+<path d="M0 235L75 273L0 300Z" fill="#0c7ff2"/>
+
+<!-- tech emblem -->
+<g transform="translate(52 38)" stroke="#fff" fill="none" stroke-width="6">
+ <path d="M0 25L45 0L90 25V78L45 103L0 78Z"/>
+ <rect x="20" y="29" width="50" height="42" rx="6"/>
+ <path d="M35 50h20M45 40v20"/>
+ <path d="M28 88h34"/>
+</g>
+
+<!-- title -->
+<text x="245" y="74" font-family="Segoe UI,Arial,sans-serif" font-size="34" font-weight="800" fill="#071c4c">DEPLOY AUTOMATIZADO</text>
+<text x="242" y="171" font-family="Segoe UI,Arial,sans-serif" font-size="84" font-weight="900" fill="#071c4c">PIMS</text>
+<text x="482" y="171" font-family="Segoe UI,Arial,sans-serif" font-size="67" font-weight="800" fill="#6c727d">NO</text>
+<text x="590" y="171" font-family="Segoe UI,Arial,sans-serif" font-size="84" font-weight="900" fill="url(#blue)">INTUNE</text>
+<line x1="240" y1="196" x2="1010" y2="196" stroke="#075bd0" stroke-width="4"/>
+
+<!-- Microsoft Intune -->
+<g transform="translate(1100 38)">
+ <g fill="#0867d9">
+  <rect width="34" height="34"/><rect x="41" width="34" height="34"/>
+  <rect y="41" width="34" height="34"/><rect x="41" y="41" width="34" height="34"/>
+ </g>
+ <text x="95" y="40" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="800" fill="#071c4c">Microsoft Intune</text>
+ <text x="95" y="70" font-family="Segoe UI,Arial,sans-serif" font-size="18" font-weight="700" fill="#0878ed">Win32 Apps</text>
+</g>
+
+<!-- ORACLE -->
+<text x="1100" y="180" font-family="Arial,Segoe UI,sans-serif" font-size="82" font-weight="800" font-style="italic" letter-spacing="2" fill="url(#red)">ORACLE</text>
+<path d="M1090 195H1530" stroke="#e60000" stroke-width="3"/>
+
+<!-- cloud -->
+<g transform="translate(1515 30)" fill="none" stroke="#e00000" stroke-width="6">
+ <path d="M55 120C12 120 6 70 43 56C48 16 101 5 126 35C163 19 205 44 204 82C235 87 239 120 209 120Z"/>
+ <path d="M130 115V177M106 142L130 116L154 142" stroke-width="8"/>
+</g>
+
+<!-- category line -->
+<text x="145" y="235" font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="800" fill="#071c4c">VISUAL C++</text>
+<circle cx="260" cy="229" r="5" fill="#e60000"/>
+<text x="280" y="235" font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="800" fill="#071c4c">TEAM DEVELOPER 7.3</text>
+<circle cx="493" cy="229" r="5" fill="#e60000"/>
+<text x="512" y="235" font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="800" fill="#071c4c">BDE 5.2</text>
+<circle cx="603" cy="229" r="5" fill="#e60000"/>
+<text x="622" y="235" font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="800" fill="#071c4c">ORACLE CLIENT 19c</text>
+<circle cx="817" cy="229" r="5" fill="#e60000"/>
+<text x="837" y="235" font-family="Segoe UI,Arial,sans-serif" font-size="19" font-weight="800" fill="#071c4c">CONFIGURAÇÃO PIMCS</text>
+
+<!-- pipeline -->
+<g transform="translate(135 320)" font-family="Segoe UI,Arial,sans-serif" text-anchor="middle">
+ <!-- connectors -->
+ <g stroke="#7c91a8" stroke-width="3" fill="none" stroke-dasharray="4 8">
+  <path d="M80 45H185"/><path d="M275 45H380"/><path d="M470 45H575"/><path d="M665 45H770"/><path d="M860 45H965"/>
+ </g>
+ <g fill="#7c91a8" font-size="34"><text x="185" y="56">›</text><text x="380" y="56">›</text><text x="575" y="56">›</text><text x="770" y="56">›</text><text x="965" y="56">›</text></g>
+
+ <!-- c++ -->
+ <g transform="translate(35 45)">
+  <path d="M0-43L38-21V21L0 43L-38 21V-21Z" fill="none" stroke="#5420bd" stroke-width="6"/>
+  <text y="10" fill="#5420bd" font-size="27" font-weight="900">C++</text>
+  <text y="88" fill="#5420bd" font-size="18" font-weight="800">VISUAL C++</text>
+  <text y="116" fill="#071c4c" font-size="14">2005 • 2008 • 2013</text><text y="138" fill="#071c4c" font-size="14">x86 / x64</text>
+ </g>
+
+ <!-- team -->
+ <g transform="translate(230 45)">
+  <rect x="-40" y="-40" width="80" height="80" rx="10" fill="none" stroke="#075bd0" stroke-width="6"/>
+  <g fill="#075bd0"><rect x="-25" y="-25" width="21" height="21"/><rect x="5" y="-25" width="21" height="21"/><rect x="-25" y="5" width="21" height="21"/><rect x="5" y="5" width="21" height="21"/></g>
+  <text y="88" fill="#075bd0" font-size="18" font-weight="800">TEAM DEVELOPER</text><text y="116" fill="#075bd0" font-size="17" font-weight="800">7.3</text>
+ </g>
+
+ <!-- BDE -->
+ <g transform="translate(425 45)">
+  <ellipse cy="-26" rx="38" ry="14" fill="none" stroke="#087b35" stroke-width="5"/>
+  <path d="M-38-26V27C-38 45 38 45 38 27V-26M-38 0C-38 18 38 18 38 0" fill="none" stroke="#087b35" stroke-width="5"/>
+  <text y="88" fill="#087b35" font-size="18" font-weight="800">BDE 5.2</text><text y="116" fill="#071c4c" font-size="14">Borland Database</text><text y="137" fill="#071c4c" font-size="14">Engine</text>
+ </g>
+
+ <!-- oracle x64 -->
+ <g transform="translate(620 45)">
+  <ellipse cy="-26" rx="38" ry="14" fill="none" stroke="#d40d0d" stroke-width="5"/>
+  <path d="M-38-26V27C-38 45 38 45 38 27V-26M-38 0C-38 18 38 18 38 0" fill="none" stroke="#d40d0d" stroke-width="5"/>
+  <text y="88" fill="#d40d0d" font-size="17" font-weight="800">ORACLE CLIENT 19c</text><text y="116" fill="#071c4c" font-size="16">x64</text>
+ </g>
+
+ <!-- oracle x86 -->
+ <g transform="translate(815 45)">
+  <ellipse cy="-26" rx="38" ry="14" fill="none" stroke="#d40d0d" stroke-width="5"/>
+  <path d="M-38-26V27C-38 45 38 45 38 27V-26M-38 0C-38 18 38 18 38 0" fill="none" stroke="#d40d0d" stroke-width="5"/>
+  <text y="88" fill="#d40d0d" font-size="17" font-weight="800">ORACLE CLIENT 19c</text><text y="116" fill="#071c4c" font-size="16">x86</text>
+ </g>
+
+ <!-- pims -->
+ <g transform="translate(1010 45)">
+  <circle r="31" fill="none" stroke="#ff5a00" stroke-width="6"/><circle r="12" fill="none" stroke="#ff5a00" stroke-width="5"/>
+  <path d="M0-47V-32M0 32V47M-47 0H-32M32 0H47M-33-33L-23-23M23 23L33 33M33-33L23-23M-23 23L-33 33" stroke="#ff5a00" stroke-width="5"/>
+  <text y="88" fill="#ff5a00" font-size="18" font-weight="800">PIMCS</text><text y="116" fill="#071c4c" font-size="14">Configuração</text><text y="137" fill="#071c4c" font-size="14">Final</text>
+ </g>
+</g>
+
+<!-- laptop -->
+<g transform="translate(1195 285)" filter="url(#shadow)">
+ <polygon points="40,0 320,35 300,225 15,190" fill="#071326" stroke="#0a2d67" stroke-width="5"/>
+ <polygon points="58,20 300,49 283,200 34,172" fill="url(#screen)"/>
+ <polygon points="15,190 300,225 365,265 82,242 -35,205" fill="#8aa0bb" stroke="#314d70" stroke-width="3"/>
+ <polygon points="45,198 282,226 321,247 89,227" fill="#d7e1eb" opacity=".7"/>
+ <!-- windows -->
+ <g transform="translate(145 78) skewY(7)" fill="#fff"><rect width="30" height="30"/><rect x="36" width="30" height="30"/><rect y="36" width="30" height="30"/><rect x="36" y="36" width="30" height="30"/></g>
+ <text x="180" y="180" fill="#fff" font-family="Segoe UI,Arial,sans-serif" font-size="34" font-weight="700" transform="rotate(7 180 180)">Intune</text>
+</g>
+
+<!-- server -->
+<g transform="translate(1515 285)" filter="url(#shadow)">
+ <g fill="#071d4b" stroke="#075bd0" stroke-width="2">
+  <rect y="0" width="180" height="60" rx="8"/><rect y="68" width="180" height="60" rx="8"/><rect y="136" width="180" height="60" rx="8"/><rect y="204" width="180" height="60" rx="8"/>
+ </g>
+ <g fill="#31d982"><circle cx="22" cy="30" r="5"/><circle cx="39" cy="30" r="5"/><circle cx="22" cy="98" r="5"/><circle cx="39" cy="98" r="5"/><circle cx="22" cy="166" r="5"/><circle cx="39" cy="166" r="5"/><circle cx="22" cy="234" r="5"/><circle cx="39" cy="234" r="5"/></g>
+ <g stroke="#0e7af2" stroke-width="3"><path d="M75 30h75"/><path d="M75 98h75"/><path d="M75 166h75"/><path d="M75 234h75"/></g>
+</g>
+
+<!-- shield -->
+<g transform="translate(1460 430)" filter="url(#shadow)">
+ <path d="M75 0L142 24V86C142 133 108 166 75 180C42 166 8 133 8 86V24Z" fill="#08265c" stroke="#f1261d" stroke-width="9"/>
+ <path d="M43 88L66 111L111 62" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+<!-- feature card -->
+<rect x="70" y="545" width="1410" height="82" rx="15" fill="#fff" stroke="#b9c8dc" stroke-width="2"/>
+<g font-family="Segoe UI,Arial,sans-serif">
+ <g transform="translate(95 565)"><path d="M28 0L54 10V33C54 51 41 64 28 70C15 64 2 51 2 33V10Z" fill="none" stroke="#071c4c" stroke-width="4"/><path d="M16 34l9 9 17-20" fill="none" stroke="#071c4c" stroke-width="4"/><text x="78" y="24" fill="#071c4c" font-size="17" font-weight="800">AUTOMATIZADO</text><text x="78" y="49" fill="#273750" font-size="14">Scripts PowerShell</text></g>
+ <line x1="350" y1="560" x2="350" y2="615" stroke="#c5d1df"/>
+ <g transform="translate(390 565)"><path d="M5 0h35l15 15v55H5Z" fill="none" stroke="#071c4c" stroke-width="4"/><path d="M40 0v16h15M16 34h28M16 46h28" fill="none" stroke="#071c4c" stroke-width="3"/><text x="78" y="24" fill="#071c4c" font-size="17" font-weight="800">LOGS DETALHADOS</text><text x="78" y="49" fill="#273750" font-size="14">Rastreabilidade completa</text></g>
+ <line x1="690" y1="560" x2="690" y2="615" stroke="#c5d1df"/>
+ <g transform="translate(730 565)"><path d="M0 15L28 0L56 15V49L28 65L0 49Z" fill="none" stroke="#071c4c" stroke-width="4"/><path d="M0 15l28 16 28-16M28 31v34" fill="none" stroke="#071c4c" stroke-width="3"/><text x="78" y="24" fill="#071c4c" font-size="17" font-weight="800">INTUNE WIN32</text><text x="78" y="49" fill="#273750" font-size="14">Implantação moderna</text></g>
+ <line x1="1025" y1="560" x2="1025" y2="615" stroke="#c5d1df"/>
+ <g transform="translate(1065 565)"><circle cx="31" cy="31" r="29" fill="none" stroke="#087b35" stroke-width="4"/><path d="M17 32l10 10 20-24" fill="none" stroke="#087b35" stroke-width="5"/><text x="78" y="24" fill="#071c4c" font-size="17" font-weight="800">VALIDAÇÕES</text><text x="78" y="49" fill="#273750" font-size="14">Detecção e conformidade</text></g>
+</g>
+
+<!-- footer -->
+<path d="M0 650H1800V720H0Z" fill="url(#footer)"/>
+<path d="M1300 650C1480 650 1640 630 1800 580V720H1300Z" fill="#e00000" opacity=".85"/>
+<g font-family="Segoe UI,Arial,sans-serif" fill="#fff" font-size="20" font-weight="800">
+ <text x="130" y="695">⚙  AUTOMAÇÃO</text><text x="480" y="695">♢  CONFIABILIDADE</text><text x="850" y="695">◉  PADRÃO</text><text x="1120" y="695">▮▮▮  ESCALABILIDADE</text>
+</g>
+</svg>
