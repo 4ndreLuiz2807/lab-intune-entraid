@@ -1,7 +1,4 @@
 <img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/Oracle/banner_pims_intune_raw_editavel.svg" width="100%" />
-
-# Deploy Completo do PIMS via Microsoft Intune
-
 > Documentação do processo validado em laboratório para implantação dos
 > pré-requisitos do PIMS, Oracle Client 19c x64/x86 e configuração final
 > do PIMCS utilizando Microsoft Intune Win32 Apps.
