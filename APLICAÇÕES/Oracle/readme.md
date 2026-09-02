@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICAÇÕES/Google%20Chrome/banner_google_chrome_intune.svg" width="100%" />
+
 # Deploy Completo do PIMS via Microsoft Intune
 
 > Documentação do processo validado em laboratório para implantação dos
