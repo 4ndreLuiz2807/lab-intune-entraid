@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICAÇÕES/Google%20Chrome/banner_google_chrome_intune.svg" width="100%" />
+<img src="https://raw.githubusercontent.com/4ndreLuiz2807/lab-intune-entraid/refs/heads/main/APLICA%C3%87%C3%95ES/Oracle/banner_pims_intune_raw_editavel.svg" width="100%" />
 
 # Deploy Completo do PIMS via Microsoft Intune
 
