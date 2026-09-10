@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img src="./HASH.png" alt="Deploy PIMS via Microsoft Intune" width="100%">
+</p>
 # Coleta de Hardware Hash do Windows Autopilot via GPO
 
 Este projeto documenta uma solução para **coletar automaticamente o Hardware Hash de computadores Windows por meio de GPO** e armazenar o arquivo CSV em um compartilhamento de rede centralizado.
