@@ -1,4 +1,7 @@
 
+<p align="center">
+  <img src="./HPCMSL.png" alt="Deploy PIMS via Microsoft Intune" width="100%">
+</p>
 # HP Client Management Script Library (HP CMSL) via Microsoft Intune
 
 Este projeto documenta o processo de empacotamento e implantação do **HP Client Management Script Library (HP CMSL)** através do **Microsoft Intune**, utilizando o formato **Win32 App (`.intunewin`)**.
