@@ -1,1 +1,0 @@
-﻿winget install -h --id JGraph.Draw --source winget --scope machine --accept-source-agreements --accept-package-agreements
