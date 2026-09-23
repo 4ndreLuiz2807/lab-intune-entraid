@@ -1,84 +1,90 @@
-# Foxit PDF Reader - Deploy via Microsoft Intune
+# Google Earth Pro - Deploy via Microsoft Intune
 
 ## Visão Geral
 
-Este pacote realiza a instalação do **Foxit PDF Reader** através do **Microsoft Intune**, utilizando o formato **Win32 App (.intunewin)**.
+Este pacote realiza a instalação do **Google Earth Pro** através do **Microsoft Intune**, utilizando o formato **Win32 App (.intunewin)**.
 
-O aplicativo é disponibilizado no **Portal da Empresa** para instalação sob demanda pelos usuários autorizados.
+O aplicativo pode ser disponibilizado no **Portal da Empresa** para instalação sob demanda pelos usuários autorizados.
 
 ---
 
 ## Objetivo
 
-Disponibilizar o Foxit PDF Reader de forma silenciosa e padronizada através do Microsoft Intune.
+Disponibilizar o Google Earth Pro de forma silenciosa e padronizada através do Microsoft Intune.
 
 Principais objetivos:
 
 - Instalação silenciosa
 - Instalação em contexto SYSTEM
 - Disponibilização no Portal da Empresa
-- Desinstalação silenciosa
 - Detecção automática pelo Intune
+- Desinstalação silenciosa
 - Sem necessidade de intervenção do usuário
 
 ---
 
 ## Estrutura do Pacote
 
+Exemplo:
+
 ```text
-FoxitReader
+GoogleEarth
 │
-└── FoxitPDFReader.exe
+├── googleearth-win-pro-x64.exe
+└── uninstall.ps1
 ```
 
-Neste deploy foi utilizado o executável diretamente, sem script PowerShell intermediário.
+> Ajuste o nome do executável conforme a versão baixada.  
+> Exemplo atual: `googleearth-win-pro-7.3.7.xxxx-x64.exe`
 
 ---
 
 ## Instalação Silenciosa
 
+Para o instalador EXE do Google Earth Pro, utilize:
+
 ```cmd
-FoxitPDFReader.exe /install /quiet /norestart
+googleearth-win-pro-x64.exe OMAHA=1
 ```
 
-### Parâmetros
+Se o arquivo possuir a versão no nome:
+
+```cmd
+googleearth-win-pro-7.3.7.xxxx-x64.exe OMAHA=1
+```
+
+### Parâmetro
 
 | Parâmetro | Função |
 |---|---|
-| `/install` | Executa a instalação |
-| `/quiet` | Executa sem interface gráfica |
-| `/norestart` | Impede reinicialização automática |
-
----
-
-## Desinstalação Silenciosa
-
-```cmd
-FoxitPDFReader.exe /uninstall /quiet /norestart
-```
+| `OMAHA=1` | Executa a instalação do Google Earth Pro em modo silencioso |
 
 ---
 
 ## Empacotamento com IntuneWinAppUtil
 
+Exemplo de estrutura:
+
 ```text
-C:\Intune\FoxitReader
-└── FoxitPDFReader.exe
+C:\Intune\GoogleEarth
+│
+├── googleearth-win-pro-x64.exe
+└── uninstall.ps1
 ```
+
+Executar:
 
 ```cmd
-IntuneWinAppUtil.exe -c "C:\Intune\FoxitReader" -s "FoxitPDFReader.exe" -o "C:\Intune\Output"
+IntuneWinAppUtil.exe -c "C:\Intune\GoogleEarth" -s "googleearth-win-pro-x64.exe" -o "C:\Intune\Output"
 ```
 
-Resultado esperado:
-
-```text
-FoxitPDFReader.intunewin
-```
+O resultado será um arquivo `.intunewin`.
 
 ---
 
 ## Cadastro no Microsoft Intune
+
+Acessar:
 
 ```text
 Microsoft Intune Admin Center
@@ -88,83 +94,176 @@ Microsoft Intune Admin Center
 → Aplicativo do Windows (Win32)
 ```
 
-Selecionar:
-
-```text
-FoxitPDFReader.intunewin
-```
+Selecionar o arquivo `.intunewin` gerado.
 
 ---
 
 ## Informações do Aplicativo
 
+Sugestão:
+
 ```text
 Nome:
-Foxit PDF Reader
+Google Earth Pro
 
 Editor:
-Foxit Software
+Google LLC
 
 Categoria:
-Produtividade / Documentos e PDF
+Mapas / Engenharia / Geoprocessamento
 
 Descrição:
-Leitor de arquivos PDF corporativo disponibilizado através do Portal da Empresa.
+Aplicativo Google Earth Pro disponibilizado através do Portal da Empresa para visualização de imagens de satélite, mapas, terrenos e dados geográficos.
 ```
 
 ---
 
 ## Programa
 
-### Instalação
+### Comando de instalação
 
 ```cmd
-FoxitPDFReader.exe /install /quiet /norestart
+googleearth-win-pro-x64.exe OMAHA=1
 ```
 
-### Desinstalação
+> Substitua pelo nome exato do instalador incluído no pacote.
 
-```cmd
-FoxitPDFReader.exe /uninstall /quiet /norestart
-```
+### Comando de desinstalação
 
-### Comportamento
+Recomenda-se utilizar um script que localize automaticamente o comando de desinstalação registrado pelo Google Earth Pro.
 
 ```text
-Comportamento da instalação:
-Sistema
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\uninstall.ps1
+```
 
-Reinicialização:
+### Comportamento da instalação
+
+```text
+Sistema
+```
+
+### Reinicialização do dispositivo
+
+```text
 Nenhuma ação específica
+```
+
+---
+
+## Script de Desinstalação
+
+Arquivo:
+
+```text
+uninstall.ps1
+```
+
+Conteúdo:
+
+```powershell
+$ErrorActionPreference = "Stop"
+
+$RegistryPaths = @(
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+    "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+)
+
+$GoogleEarth = Get-ItemProperty $RegistryPaths -ErrorAction SilentlyContinue |
+    Where-Object {
+        $_.DisplayName -match "^Google Earth Pro"
+    } |
+    Select-Object -First 1
+
+if (-not $GoogleEarth) {
+    Write-Output "Google Earth Pro não encontrado."
+    exit 0
+}
+
+Write-Output "Google Earth Pro encontrado: $($GoogleEarth.DisplayName)"
+Write-Output "Versão: $($GoogleEarth.DisplayVersion)"
+
+if ($GoogleEarth.QuietUninstallString) {
+
+    Start-Process `
+        -FilePath "cmd.exe" `
+        -ArgumentList "/c `"$($GoogleEarth.QuietUninstallString)`"" `
+        -Wait
+
+    exit 0
+}
+
+$UninstallString = $GoogleEarth.UninstallString
+
+if ($UninstallString -match "\{[A-Fa-f0-9\-]+\}") {
+
+    $ProductCode = $Matches[0]
+
+    $Process = Start-Process `
+        -FilePath "msiexec.exe" `
+        -ArgumentList "/x $ProductCode /qn /norestart" `
+        -Wait `
+        -PassThru
+
+    exit $Process.ExitCode
+}
+
+if ($UninstallString) {
+
+    Start-Process `
+        -FilePath "cmd.exe" `
+        -ArgumentList "/c `"$UninstallString`"" `
+        -Wait
+
+    exit 0
+}
+
+exit 1
 ```
 
 ---
 
 ## Requisitos
 
+Configuração recomendada:
+
 ```text
 Arquitetura:
 64-bit
 
-Sistema operacional mínimo:
-Windows 10
-```
+Sistema operacional:
+Windows 10 ou Windows 11
 
-Ajustar conforme os padrões do ambiente corporativo.
+Comportamento da instalação:
+Sistema
+```
 
 ---
 
 ## Regra de Detecção
 
+Uma forma simples e confiável é detectar o executável do Google Earth Pro.
+
+Normalmente:
+
+```text
+C:\Program Files\Google\Google Earth Pro\client\googleearth.exe
+```
+
+### Script de detecção
+
 ```powershell
 $Paths = @(
-    "C:\Program Files\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe",
-    "C:\Program Files (x86)\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe"
+    "C:\Program Files\Google\Google Earth Pro\client\googleearth.exe",
+    "C:\Program Files (x86)\Google\Google Earth Pro\client\googleearth.exe"
 )
 
 foreach ($Path in $Paths) {
+
     if (Test-Path $Path) {
-        Write-Output "Foxit PDF Reader instalado"
+
+        $Version = (Get-Item $Path).VersionInfo.ProductVersion
+
+        Write-Output "Google Earth Pro detectado - versão $Version"
         exit 0
     }
 }
@@ -187,7 +286,38 @@ detect.ps1
 
 ---
 
+## Alternativa de Detecção por Registro
+
+Também é possível utilizar:
+
+```powershell
+Get-ItemProperty `
+"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+"HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" `
+-ErrorAction SilentlyContinue |
+Where-Object {
+    $_.DisplayName -match "^Google Earth Pro"
+}
+```
+
+Se o aplicativo for encontrado, a detecção pode retornar:
+
+```powershell
+Write-Output "Google Earth Pro instalado"
+exit 0
+```
+
+Caso contrário:
+
+```powershell
+exit 1
+```
+
+---
+
 ## Atribuição
+
+Para disponibilizar no Portal da Empresa:
 
 ```text
 Atribuições
@@ -199,7 +329,7 @@ Exemplo:
 
 ```text
 Disponível:
-Grupo de usuários
+Grupo de usuários autorizado
 
 Obrigatório:
 Nenhuma atribuição
@@ -215,78 +345,62 @@ Nenhuma atribuição
 ```text
 Portal da Empresa
         ↓
-Usuário seleciona Foxit PDF Reader
+Usuário seleciona Google Earth Pro
         ↓
 Intune Management Extension
         ↓
 Download do .intunewin
         ↓
-Validação / descriptografia
+Extração em IMECache
         ↓
 Execução do instalador
         ↓
-FoxitPDFReader.exe /install /quiet /norestart
+googleearth-win-pro-x64.exe OMAHA=1
+        ↓
+Instalação em contexto SYSTEM
         ↓
 Regra de detecção
         ↓
-Aplicativo instalado
+Google Earth Pro instalado
 ```
 
 ---
 
-## Problema Encontrado Durante a Implementação
+## Teste Local Antes do Intune
 
-Inicialmente a instalação era executada através de:
+Abra PowerShell ou CMD como administrador na pasta do instalador.
 
-```cmd
-powershell.exe -ExecutionPolicy Bypass -NoProfile -File .\install.ps1
+PowerShell:
+
+```powershell
+.\googleearth-win-pro-x64.exe OMAHA=1
 ```
 
-O pacote era baixado corretamente pelo Intune, porém o processo de instalação permanecia em execução até atingir o tempo máximo configurado.
+Depois valide:
 
-O Intune retornava falha após o timeout da instalação.
-
-O download do `.intunewin`, validação, descriptografia e extração estavam funcionando corretamente.
-
-A falha ocorria após o início do `install.ps1`.
-
----
-
-## Solução Aplicada
-
-O script PowerShell foi removido do processo de instalação.
-
-A instalação passou a utilizar diretamente:
-
-```cmd
-FoxitPDFReader.exe /install /quiet /norestart
+```powershell
+Test-Path "C:\Program Files\Google\Google Earth Pro\client\googleearth.exe"
 ```
 
-Após essa alteração, a instalação através do Portal da Empresa passou a funcionar corretamente.
+Também é possível consultar o registro:
 
----
-
-## Boas Práticas
-
-Para aplicações que possuem parâmetros silenciosos oficiais, priorizar a execução direta do instalador.
-
-```text
-Intune
-   ↓
-EXE / MSI
-   ↓
-Instalação silenciosa
+```powershell
+Get-ItemProperty `
+"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+"HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" `
+-ErrorAction SilentlyContinue |
+Where-Object {
+    $_.DisplayName -match "^Google Earth Pro"
+} |
+Select-Object `
+DisplayName,
+DisplayVersion,
+Publisher,
+InstallLocation,
+PSChildName,
+UninstallString,
+QuietUninstallString
 ```
-
-Utilizar PowerShell quando houver necessidade de:
-
-- Pós-configuração
-- Manipulação de registro
-- Cópia de arquivos
-- Configuração de variáveis
-- Validação de dependências
-- Instalação de múltiplos componentes
-- Geração de logs customizados
 
 ---
 
@@ -306,54 +420,69 @@ IntuneManagementExtension.log
 AgentExecutor.log
 ```
 
-Pesquisar falhas:
+Pesquisar falhas relacionadas ao Google Earth:
 
 ```powershell
 Select-String `
 -Path "C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\*.log" `
--Pattern "Foxit","ExitCode","Error","Failed" |
+-Pattern "Google Earth","googleearth","ExitCode","Error","Failed" |
 Select-Object -Last 100
 ```
 
 ---
 
-## Validação Manual
+## Boas Práticas
 
-```powershell
-Test-Path "C:\Program Files\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe"
+Para este pacote:
+
+```text
+Tipo:
+Windows app (Win32)
+
+Instalação:
+EXE diretamente
+
+Contexto:
+SYSTEM
+
+Disponibilização:
+Portal da Empresa
 ```
 
-Ou:
+Sempre testar o comando silencioso localmente antes de empacotar.
 
-```powershell
-Test-Path "C:\Program Files (x86)\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe"
-```
+Evitar scripts PowerShell intermediários quando o próprio instalador possui um parâmetro silencioso funcional.
 
-Consulta pelo registro:
+Utilizar scripts quando houver necessidade de:
 
-```powershell
-Get-ItemProperty `
-"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
-"HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" `
--ErrorAction SilentlyContinue |
-Where-Object {
-    $_.DisplayName -match "Foxit.*PDF.*Reader"
-} |
-Select-Object DisplayName,DisplayVersion,Publisher
-```
+- Pós-configuração
+- Manipulação de registro
+- Cópia de arquivos
+- Tratamento de versões anteriores
+- Remoção customizada
+- Dependências
+- Logs adicionais
 
 ---
 
-## Resultado
+## Resultado Esperado
 
 ```text
 Download pelo Intune: OK
 Instalação silenciosa: OK
+Instalação em SYSTEM: OK
 Detecção: OK
 Portal da Empresa: OK
 Desinstalação: Configurada
-Execução em contexto SYSTEM: OK
 ```
+
+---
+
+## Referências
+
+- Google Earth Pro - página oficial de versões
+- Google Earth Help - instalação e desinstalação
+- Google Earth Help - instaladores diretos
 
 ---
 
