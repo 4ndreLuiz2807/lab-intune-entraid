@@ -1,794 +1,448 @@
+# Deploy de Atalho Web via Microsoft Intune
 
-# Deploy de Aplicações Web (PWA) com Microsoft Intune e Microsoft Edge
+Este repositório contém um modelo para publicar um sistema web no Microsoft Intune como **Win32 App**, criando:
 
-## Visão geral
+- atalho na Área de Trabalho pública do Windows;
+- ícone personalizado `.ico`;
+- arquivo de detecção em `C:\ProgramData`;
+- script de instalação;
+- script de desinstalação;
+- script de detecção para o Intune.
 
-Este documento descreve como distribuir aplicações Web/PWA de forma silenciosa em dispositivos Windows gerenciados pelo **Microsoft Intune**, utilizando a política do **Microsoft Edge `WebAppInstallForceList`**.
+O exemplo usa o **HelpDesk Bio / TomTicket**, mas pode ser reutilizado para qualquer outro sistema web.
 
-O objetivo é permitir que sistemas Web corporativos — por exemplo **SAP Web, TOTVS, Power BI, portais internos e outros sistemas acessados pelo navegador** — sejam instalados como aplicativos do Edge, sem depender de instalação manual pelo usuário.
-
-> **Importante:** os parâmetros utilizados no JSON pertencem à política do Microsoft Edge. Eles não são parâmetros específicos de cada site/PWA.  
-> Normalmente, para cadastrar uma nova aplicação, basta alterar a URL e, opcionalmente, o nome e o ícone.
-
----
-
-## Sumário
-
-- [1. Pré-requisitos](#1-pré-requisitos)
-- [2. Política utilizada](#2-política-utilizada)
-- [3. Criando o perfil no Intune](#3-criando-o-perfil-no-intune)
-- [4. Configuração recomendada](#4-configuração-recomendada)
-- [5. Exemplos](#5-exemplos)
-- [6. Parâmetros disponíveis](#6-parâmetros-disponíveis)
-- [7. Atribuição da política](#7-atribuição-da-política)
-- [8. Sincronização e validação](#8-sincronização-e-validação)
-- [9. Solução de problemas](#9-solução-de-problemas)
-- [10. Remoção ou alteração](#10-remoção-ou-alteração)
-- [11. Modelo padrão para novos PWAs](#11-modelo-padrão-para-novos-pwas)
-- [12. Referências](#12-referências)
-
----
-
-# 1. Pré-requisitos
-
-Antes de iniciar, valide:
-
-- Dispositivo Windows gerenciado pelo Microsoft Intune.
-- Microsoft Edge instalado e atualizado.
-- Dispositivo recebendo políticas do Intune.
-- URL do sistema acessível pelo computador.
-- Site utilizando `HTTPS`, preferencialmente.
-- Permissão administrativa no Microsoft Intune.
-- Grupo de dispositivos definido para receber a configuração.
-
----
-
-# 2. Política utilizada
-
-A política utilizada é:
+## Estrutura do pacote
 
 ```text
-WebAppInstallForceList
+HelpDesk-Bio-User/
+├── install.ps1
+├── uninstall.ps1
+├── detect.ps1
+└── HelpDesk.ico
 ```
 
-Nome apresentado no catálogo do Intune:
+> O nome do arquivo `.ico` precisa ser exatamente o mesmo informado nos scripts.
 
-```text
-Configure list of force-installed Web Apps
-```
+# 1. install.ps1
 
-No Catálogo de Configurações, o campo pode aparecer como:
+```powershell
+$ErrorActionPreference = "Stop"
 
-```text
-URLs for Web Apps to be silently installed. (Device)
-```
+# ============================================================
+# CONFIGURACOES - ALTERE ESTES CAMPOS QUANDO NECESSARIO
+# ============================================================
 
-Essa política permite instalar aplicações Web silenciosamente pelo Microsoft Edge.
+# Nome que aparecera na Area de Trabalho
+$AppName = "HelpDesk - Bio"
 
-O Microsoft Edge exige que o valor enviado seja uma **lista JSON**, mesmo quando apenas uma aplicação será instalada.
+# URL do sistema
+$Url = "https://bioaroeira.tomticket.com/helpdesk"
 
----
+# Pasta principal da empresa
+$CompanyRoot = "C:\ProgramData\Bioaroeira"
 
-# 3. Criando o perfil no Intune
+# Pasta interna do aplicativo
+$BasePath = "$CompanyRoot\HelpDesk"
 
-Acesse:
+# Nome do arquivo de icone
+$IconName = "HelpDesk.ico"
 
-```text
-Microsoft Intune Admin Center
-    ↓
-Devices
-    ↓
-Windows
-    ↓
-Configuration
-    ↓
-Create
-    ↓
-New policy
-```
+$IconPath = Join-Path $BasePath $IconName
+$DetectionFile = Join-Path $BasePath "installed.txt"
+$ShortcutPath = "C:\Users\Public\Desktop\$AppName.url"
+$LogPath = "$CompanyRoot\HelpDesk-Bio-install.log"
 
-Selecione:
+function Write-Log {
+    param([string]$Message)
 
-```text
-Platform:
-Windows 10 and later
+    $Time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-Profile type:
-Settings catalog
-```
+    "[$Time] $Message" |
+        Out-File -FilePath $LogPath -Append -Encoding UTF8
+}
 
-Exemplo de nome:
+try {
+    New-Item -Path $CompanyRoot -ItemType Directory -Force | Out-Null
+    New-Item -Path $BasePath -ItemType Directory -Force | Out-Null
 
-```text
-CFG - SAP WEB (PWA)
-```
+    Write-Log "Inicio da instalacao."
 
-Depois selecione:
+    if ([string]::IsNullOrWhiteSpace($Url)) {
+        throw "URL nao configurada."
+    }
 
-```text
-Add settings
-    ↓
-Microsoft Edge
-    ↓
-Configure list of force-installed Web Apps
-```
+    $SourceIcon = Join-Path $PSScriptRoot $IconName
 
-Habilite:
+    if (-not (Test-Path $SourceIcon)) {
+        throw "Arquivo $IconName nao encontrado dentro do pacote."
+    }
 
-```text
-Configure list of force-installed Web Apps = Enabled
-```
+    Copy-Item -Path $SourceIcon -Destination $IconPath -Force
 
----
+    if (-not (Test-Path $IconPath)) {
+        throw "Falha ao copiar o icone."
+    }
 
-# 4. Configuração recomendada
+    if (Test-Path $ShortcutPath) {
+        Remove-Item -Path $ShortcutPath -Force -ErrorAction SilentlyContinue
+    }
 
-Para uma aplicação Web corporativa, um modelo simples e reutilizável é:
+    $ShortcutContent = @"
+[InternetShortcut]
+URL=$Url
+IconFile=$IconPath
+IconIndex=0
+"@
 
-```json
-[
-  {
-    "url": "https://SEU-SISTEMA/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true
-  }
-]
-```
+    Set-Content -Path $ShortcutPath -Value $ShortcutContent -Encoding ASCII -Force
 
-Esse modelo:
+    if (-not (Test-Path $ShortcutPath)) {
+        throw "Falha ao criar o atalho."
+    }
 
-- instala a aplicação Web silenciosamente;
-- abre o sistema em uma janela separada do navegador;
-- cria um atalho na Área de Trabalho;
-- pode ser reutilizado para diferentes sistemas alterando principalmente a URL.
+    $DetectionContent = @"
+Application=$AppName
+Status=Installed
+URL=$Url
+Icon=$IconPath
+InstallDate=$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+"@
 
-### Versão compacta
+    Set-Content -Path $DetectionFile -Value $DetectionContent -Encoding UTF8 -Force
 
-Caso o campo do Intune seja exibido em apenas uma linha:
+    if (-not (Test-Path $DetectionFile)) {
+        throw "Falha ao criar arquivo de deteccao."
+    }
 
-```json
-[{"url":"https://SEU-SISTEMA/","default_launch_container":"window","create_desktop_shortcut":true}]
-```
-
----
-
-# 5. Exemplos
-
-## 5.1 Mercado Livre — ambiente de teste
-
-URL limpa:
-
-```text
-https://www.mercadolivre.com.br/
-```
-
-Evite URLs com parâmetros temporários ou de rastreamento, por exemplo:
-
-```text
-https://www.mercadolivre.com.br/?msockid=XXXXXXXX
-```
-
-Configuração:
-
-```json
-[
-  {
-    "url": "https://www.mercadolivre.com.br/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true
-  }
-]
-```
-
----
-
-## 5.2 SAP Web
-
-Exemplo:
-
-```json
-[
-  {
-    "url": "https://URL-DO-SAP/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "SAP Web"
-  }
-]
-```
-
-Substitua:
-
-```text
-https://URL-DO-SAP/
-```
-
-pela URL utilizada pelos usuários para acessar o sistema.
-
----
-
-## 5.3 Power BI
-
-```json
-[
-  {
-    "url": "https://app.powerbi.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "Power BI"
-  }
-]
-```
-
----
-
-## 5.4 Microsoft 365
-
-```json
-[
-  {
-    "url": "https://www.microsoft365.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "Microsoft 365"
-  }
-]
-```
-
----
-
-## 5.5 Várias aplicações na mesma política
-
-Também é possível adicionar vários Web Apps na mesma lista:
-
-```json
-[
-  {
-    "url": "https://sistema1.contoso.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "Sistema 1"
-  },
-  {
-    "url": "https://sistema2.contoso.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "Sistema 2"
-  },
-  {
-    "url": "https://app.powerbi.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "Power BI"
-  }
-]
-```
-
-Para facilitar troubleshooting e atribuições diferentes, em ambientes corporativos pode ser mais organizado manter um perfil por aplicação ou por conjunto lógico de aplicações.
-
-Exemplo:
-
-```text
-CFG - PWA - SAP
-CFG - PWA - Power BI
-CFG - PWA - Portal RH
-CFG - PWA - TOTVS
-```
-
----
-
-# 6. Parâmetros disponíveis
-
-## `url`
-
-Obrigatório.
-
-Define o endereço da aplicação Web.
-
-Exemplo:
-
-```json
-"url": "https://app.contoso.com/"
-```
-
----
-
-## `default_launch_container`
-
-Opcional.
-
-Define como a aplicação será aberta.
-
-Para abrir em janela própria:
-
-```json
-"default_launch_container": "window"
-```
-
-Também é possível utilizar:
-
-```json
-"default_launch_container": "tab"
-```
-
-Para experiência semelhante a um aplicativo instalado, recomenda-se:
-
-```text
-window
-```
-
----
-
-## `create_desktop_shortcut`
-
-Opcional.
-
-Cria um atalho na Área de Trabalho do Windows.
-
-```json
-"create_desktop_shortcut": true
-```
-
----
-
-## `custom_name`
-
-Opcional.
-
-Permite definir um nome personalizado para o aplicativo.
-
-```json
-"custom_name": "SAP Web"
-```
-
-Disponível em versões modernas do Microsoft Edge.
-
----
-
-## `fallback_app_name`
-
-Opcional.
-
-Pode ser utilizado como nome alternativo quando o site não fornece adequadamente um nome de aplicação ou quando determinadas condições impedem a obtenção imediata dos metadados.
-
-```json
-"fallback_app_name": "SAP Web"
-```
-
-Se `custom_name` e `fallback_app_name` forem utilizados juntos, o Edge prioriza `custom_name`.
-
----
-
-## `custom_icon`
-
-Opcional.
-
-Permite substituir o ícone da aplicação.
-
-Exemplo:
-
-```json
-"custom_icon": {
-  "url": "https://servidor.contoso.com/icones/sap.png",
-  "hash": "HASH_SHA256_DO_ARQUIVO"
+    Write-Log "Instalacao concluida com sucesso."
+    Write-Output "$AppName instalado com sucesso."
+    exit 0
+}
+catch {
+    Write-Log "ERRO: $($_.Exception.Message)"
+    Write-Error $_.Exception.Message
+    exit 1
 }
 ```
 
-Requisitos indicados pela Microsoft incluem:
-
-- imagem quadrada;
-- tamanho máximo de 1 MB;
-- formatos suportados como PNG, JPEG, GIF, WEBP ou ICO;
-- URL do ícone acessível sem autenticação;
-- hash SHA256 correspondente ao arquivo.
-
-Exemplo completo:
-
-```json
-[
-  {
-    "url": "https://sap.contoso.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "SAP Web",
-    "custom_icon": {
-      "url": "https://servidor.contoso.com/icons/sap.png",
-      "hash": "HASH_SHA256"
-    }
-  }
-]
-```
-
-Para gerar o SHA256 de um arquivo no PowerShell:
+# 2. uninstall.ps1
 
 ```powershell
-Get-FileHash "C:\Temp\sap.png" -Algorithm SHA256
+$ErrorActionPreference = "SilentlyContinue"
+
+# Mesmos valores usados no install.ps1
+$AppName = "HelpDesk - Bio"
+$CompanyRoot = "C:\ProgramData\Bioaroeira"
+$BasePath = "$CompanyRoot\HelpDesk"
+
+$ShortcutPath = "C:\Users\Public\Desktop\$AppName.url"
+$LogPath = "$CompanyRoot\HelpDesk-Bio-uninstall.log"
+
+function Write-Log {
+    param([string]$Message)
+
+    if (-not (Test-Path $CompanyRoot)) {
+        New-Item -Path $CompanyRoot -ItemType Directory -Force | Out-Null
+    }
+
+    $Time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+    "[$Time] $Message" |
+        Out-File -FilePath $LogPath -Append -Encoding UTF8
+}
+
+Write-Log "Inicio da desinstalacao."
+
+if (Test-Path $ShortcutPath) {
+    Remove-Item -Path $ShortcutPath -Force
+    Write-Log "Atalho removido."
+}
+
+if (Test-Path $BasePath) {
+    Remove-Item -Path $BasePath -Recurse -Force
+    Write-Log "Pasta do aplicativo removida."
+}
+
+if ((-not (Test-Path $ShortcutPath)) -and (-not (Test-Path $BasePath))) {
+    Write-Log "Desinstalacao concluida."
+    Write-Output "$AppName removido."
+    exit 0
+}
+
+Write-Log "Falha na desinstalacao."
+exit 1
 ```
 
----
+# 3. detect.ps1
 
-# 7. Atribuição da política
+```powershell
+# ALTERE caso a pasta do sistema seja diferente
+$DetectionFile = "C:\ProgramData\Bioaroeira\HelpDesk\installed.txt"
 
-No perfil criado no Intune, acesse:
+if (Test-Path $DetectionFile) {
+    Write-Output "Application detected"
+    exit 0
+}
+
+exit 1
+```
+
+## Onde alterar para outro sistema
+
+As principais variáveis ficam no início do `install.ps1`:
+
+```powershell
+$AppName = "Nome do Sistema"
+$Url = "https://url-do-sistema"
+$CompanyRoot = "C:\ProgramData\NomeDaEmpresa"
+$BasePath = "$CompanyRoot\NomeDoSistema"
+$IconName = "NomeDoSistema.ico"
+```
+
+Exemplo para SAP Web:
+
+```powershell
+$AppName = "SAP Web"
+$Url = "https://sap.exemplo.com"
+$CompanyRoot = "C:\ProgramData\Bioaroeira"
+$BasePath = "$CompanyRoot\SAP-Web"
+$IconName = "SAP-Web.ico"
+```
+
+Exemplo para Portal RH:
+
+```powershell
+$AppName = "Portal RH"
+$Url = "https://rh.exemplo.com"
+$CompanyRoot = "C:\ProgramData\Bioaroeira"
+$BasePath = "$CompanyRoot\Portal-RH"
+$IconName = "Portal-RH.ico"
+```
+
+Depois ajuste os mesmos nomes/pastas em `uninstall.ps1` e `detect.ps1`.
+
+## Atenção ao nome do ícone
+
+Se o pacote contém:
 
 ```text
-Assignments
+HelpDesk.ico
 ```
 
-Para o cenário de instalação corporativa em computadores específicos, recomenda-se atribuir a política a um:
+o script precisa usar:
+
+```powershell
+$IconName = "HelpDesk.ico"
+```
+
+Evite misturar:
 
 ```text
-Grupo de dispositivos
+HelpDesk.ico
+HelpDesk-Bio.ico
+helpdesk.ico
 ```
 
-Exemplo:
+## Teste local
+
+```powershell
+cd C:\Intune\HelpDesk-Bio-User
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+Valide:
+
+```powershell
+Test-Path "C:\Users\Public\Desktop\HelpDesk - Bio.url"
+Test-Path "C:\ProgramData\Bioaroeira\HelpDesk\HelpDesk.ico"
+Test-Path "C:\ProgramData\Bioaroeira\HelpDesk\installed.txt"
+```
+
+Esperado:
 
 ```text
-GRP-DEV-PWA-SAP
+True
+True
+True
 ```
 
-Fluxo:
+Teste a detecção:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\detect.ps1
+$LASTEXITCODE
+```
+
+Esperado:
 
 ```text
-Dispositivo entra no grupo
-        ↓
-Intune entrega a configuração
-        ↓
-Microsoft Edge recebe WebAppInstallForceList
-        ↓
-Edge processa a política no perfil
-        ↓
-Aplicação Web é instalada
+Application detected
+0
 ```
 
-> Na tela utilizada neste procedimento, o parâmetro aparece explicitamente como `(Device)`.  
-> A aplicação Web é gerenciada pelo Edge e sua instalação é refletida no contexto/perfil do navegador do usuário.
+# Empacotamento com IntuneWinAppUtil
 
----
+```powershell
+C:\Intune\Tools\IntuneWinAppUtil.exe `
+-c "C:\Intune\HelpDesk-Bio-User" `
+-s "install.ps1" `
+-o "C:\Intune\Output"
+```
 
-# 8. Sincronização e validação
+# Configuração no Microsoft Intune
 
-## 8.1 Sincronizar pelo Intune
-
-No dispositivo:
+Crie:
 
 ```text
-Settings
-    ↓
-Accounts
-    ↓
-Access work or school
-    ↓
-Conta corporativa
-    ↓
-Info
-    ↓
-Sync
+Apps
+→ Windows
+→ Add
+→ Windows app (Win32)
 ```
 
-Também é possível executar uma sincronização pelo portal do Intune.
-
----
-
-## 8.2 Validar a política no Edge
-
-Abra:
+## Install command
 
 ```text
-edge://policy
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File install.ps1
 ```
 
-Clique em:
+## Uninstall command
 
 ```text
-Reload policies
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 ```
 
-ou:
+## Install behavior
 
 ```text
-Recarregar políticas
+System
 ```
 
-Procure:
+## Detection rule
+
+Escolha:
 
 ```text
-WebAppInstallForceList
+Use a custom detection script
 ```
 
-O resultado esperado é:
+Envie `detect.ps1` e configure:
 
 ```text
-Status: OK
+Run script as 32-bit process on 64-bit clients: No
+Enforce script signature check: No
 ```
 
----
+# Logs
 
-## 8.3 Verificar aplicativos instalados
-
-Abra:
+Instalação:
 
 ```text
-edge://apps
+C:\ProgramData\Bioaroeira\HelpDesk-Bio-install.log
 ```
 
-A aplicação deverá aparecer na lista de aplicativos gerenciados pelo Edge.
-
----
-
-## 8.4 Verificar pelo Windows
-
-Pressione:
+Desinstalação:
 
 ```text
-Win + R
+C:\ProgramData\Bioaroeira\HelpDesk-Bio-uninstall.log
 ```
 
-Execute:
+Consulta:
+
+```powershell
+Get-Content "C:\ProgramData\Bioaroeira\HelpDesk-Bio-install.log"
+```
+
+# Troubleshooting
+
+## Instalou, mas o Intune retorna falha
+
+Valide:
+
+```powershell
+Test-Path "C:\ProgramData\Bioaroeira\HelpDesk\installed.txt"
+```
+
+Depois:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\detect.ps1
+$LASTEXITCODE
+```
+
+Esperado:
 
 ```text
-shell:AppsFolder
+Application detected
+0
 ```
 
-Procure pelo aplicativo instalado.
+## O ícone não aparece
 
-Também valide:
+Valide:
 
-- Menu Iniciar;
-- Pesquisa do Windows;
-- Área de Trabalho, caso `create_desktop_shortcut` esteja habilitado.
+```powershell
+Test-Path "C:\ProgramData\Bioaroeira\HelpDesk\HelpDesk.ico"
+```
 
----
+Confira o atalho:
 
-# 9. Solução de problemas
+```powershell
+Get-Content "C:\Users\Public\Desktop\HelpDesk - Bio.url"
+```
 
-## Erro: `expected: "list", actual: "string"`
+Esperado:
 
-Exemplo observado no `edge://policy`:
+```ini
+[InternetShortcut]
+URL=https://bioaroeira.tomticket.com/helpdesk
+IconFile=C:\ProgramData\Bioaroeira\HelpDesk\HelpDesk.ico
+IconIndex=0
+```
+
+Se necessário:
+
+```powershell
+Stop-Process -Name explorer -Force
+```
+
+# Resumo das variáveis
+
+| Variável | Função | Exemplo |
+|---|---|---|
+| `$AppName` | Nome exibido na Área de Trabalho | `HelpDesk - Bio` |
+| `$Url` | Endereço do sistema | `https://bioaroeira.tomticket.com/helpdesk` |
+| `$CompanyRoot` | Pasta principal da empresa | `C:\ProgramData\Bioaroeira` |
+| `$BasePath` | Pasta do aplicativo | `C:\ProgramData\Bioaroeira\HelpDesk` |
+| `$IconName` | Nome do arquivo `.ico` | `HelpDesk.ico` |
+
+# Fluxo
 
 ```text
-Policy type mismatch: expected: "list", actual: "string".
+Microsoft Intune
+      ↓
+install.ps1
+      ↓
+Copia o ícone
+      ↓
+Cria o atalho .url
+      ↓
+Cria installed.txt
+      ↓
+detect.ps1
+      ↓
+Intune detecta o aplicativo
 ```
 
-### Causa
-
-A política recebeu apenas uma string:
-
-```text
-https://www.mercadolivre.com.br/
-```
-
-Porém o Edge esperava uma lista JSON.
-
-### Incorreto
-
-```text
-https://www.mercadolivre.com.br/
-```
-
-### Correto
-
-```json
-[
-  {
-    "url": "https://www.mercadolivre.com.br/"
-  }
-]
-```
-
-Ou:
-
-```json
-[{"url":"https://www.mercadolivre.com.br/"}]
-```
-
----
-
-## Intune mostra "Concluído", mas o aplicativo não aparece
-
-O status **Concluído** indica que o Intune processou/aplicou a configuração no dispositivo. Isso não substitui a validação do Edge.
-
-Verifique:
-
-```text
-edge://policy
-```
-
-Se `WebAppInstallForceList` apresentar:
-
-```text
-Erro
-```
-
-o Edge rejeitou o valor recebido.
-
-Se apresentar:
-
-```text
-OK
-```
-
-continue verificando:
-
-```text
-edge://apps
-```
-
-e:
-
-```text
-shell:AppsFolder
-```
-
----
-
-## A política não aparece em `edge://policy`
-
-Verifique:
-
-- atribuição ao grupo correto;
-- associação do dispositivo ao Intune;
-- status de sincronização;
-- se o Microsoft Edge está atualizado;
-- se existem conflitos com outros perfis;
-- se o dispositivo realmente pertence ao grupo utilizado na atribuição.
-
----
-
-## O aplicativo aparece, mas não existe atalho no Desktop
-
-Confirme se o JSON contém:
-
-```json
-"create_desktop_shortcut": true
-```
-
-Exemplo:
-
-```json
-[
-  {
-    "url": "https://app.contoso.com/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true
-  }
-]
-```
-
----
-
-## O site abre em uma aba normal
-
-Confirme:
-
-```json
-"default_launch_container": "window"
-```
-
----
-
-## O nome do aplicativo não ficou correto
-
-Defina:
-
-```json
-"custom_name": "Nome do Aplicativo"
-```
-
-Exemplo:
-
-```json
-[
-  {
-    "url": "https://sap.contoso.com/",
-    "custom_name": "SAP Web",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true
-  }
-]
-```
-
----
-
-## O ícone não ficou correto
-
-Primeiro permita que o Edge utilize o ícone fornecido pelo próprio site.
-
-Caso seja necessário padronizar o ícone corporativamente, utilize `custom_icon` com URL pública/internamente acessível sem autenticação e SHA256 válido.
-
----
-
-# 10. Remoção ou alteração
-
-A instalação é controlada pela política do Edge.
-
-Para alterar uma aplicação:
-
-1. Edite o JSON no perfil do Intune.
-2. Salve a política.
-3. Sincronize o dispositivo.
-4. Recarregue as políticas em:
-
-```text
-edge://policy
-```
-
-Para retirar uma aplicação do gerenciamento, remova o respectivo objeto da lista e valide o comportamento no dispositivo após a atualização da política.
-
-> Antes de remover uma aplicação de produção, teste o comportamento em um grupo piloto, especialmente quando usuários dependem dela para acesso a sistemas corporativos.
-
----
-
-# 11. Modelo padrão para novos PWAs
-
-Para novos sistemas, utilize como base:
-
-```json
-[
-  {
-    "url": "https://URL-DO-SISTEMA/",
-    "default_launch_container": "window",
-    "create_desktop_shortcut": true,
-    "custom_name": "NOME DO SISTEMA"
-  }
-]
-```
-
-Checklist:
-
-```text
-[ ] Confirmar URL oficial do sistema
-[ ] Remover parâmetros temporários da URL
-[ ] Utilizar HTTPS quando disponível
-[ ] Definir custom_name, se necessário
-[ ] Definir abertura em window
-[ ] Criar atalho no Desktop, se desejado
-[ ] Atribuir a grupo piloto
-[ ] Sincronizar dispositivo
-[ ] Validar edge://policy
-[ ] Confirmar Status: OK
-[ ] Validar edge://apps
-[ ] Validar Menu Iniciar / Desktop
-[ ] Expandir atribuição para produção
-```
-
----
-
-# 12. Referências
-
-Microsoft Learn — **WebAppInstallForceList**
-
-https://learn.microsoft.com/pt-br/deployedge/microsoft-edge-policies/webappinstallforcelist
-
-Microsoft Edge — páginas úteis para diagnóstico:
-
-```text
-edge://policy
-edge://apps
-```
-
-Windows — pasta de aplicativos:
-
-```text
-shell:AppsFolder
-```
-
----
-
-## Resumo rápido
-
-Para a maioria dos sistemas Web corporativos, o padrão pode ser:
-
-```json
-[{"url":"https://URL-DO-SISTEMA/","default_launch_container":"window","create_desktop_shortcut":true}]
-```
-
-O que normalmente muda entre uma aplicação e outra é apenas:
-
-```text
-URL
-Nome opcional
-Ícone opcional
-```
-
-Os parâmetros `default_launch_container`, `create_desktop_shortcut`, `custom_name`, `fallback_app_name` e `custom_icon` são recursos da política do **Microsoft Edge**, e não configurações específicas do SAP, TOTVS, Power BI ou de cada PWA individualmente.
+## Quando usar este modelo
+
+Este modelo é útil quando você precisa:
+
+- publicar sistemas web no Company Portal;
+- controlar o ícone exibido na Área de Trabalho;
+- criar o atalho automaticamente;
+- instalar em contexto SYSTEM;
+- possuir desinstalação limpa;
+- usar detecção personalizada no Intune;
+- reutilizar a mesma estrutura para vários sistemas.
