@@ -184,6 +184,7 @@ Install-Module Microsoft.Graph.Applications -Scope CurrentUser -Force
 Importe os módulos:
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 Import-Module Microsoft.Graph.Authentication
 Import-Module Microsoft.Graph.Applications
 ```
